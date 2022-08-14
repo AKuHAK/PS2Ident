@@ -55,7 +55,7 @@ int PS1DRVInit(void)
         ps1drv.region = *pChar;
     }
     else
-    { //Missing dot
+    { // Missing dot
         ps1drv.region = 0;
         ps1drv.major  = 0;
         ps1drv.minor  = 0;
@@ -72,19 +72,19 @@ int PS1DRVInit(void)
             result = _ps2sdk_read(fd, ps1drv.ver, sizeof(ps1drv.ver) - 1);
             _ps2sdk_close(fd);
 
-            //NULL-terminate, only if non-error
+            // NULL-terminate, only if non-error
             ps1drv.ver[result >= 0 ? result : 0] = '\0';
         }
     }
 
-    //The original always returned -1. But we'll return something more meaningful.
+    // The original always returned -1. But we'll return something more meaningful.
     return result;
 }
 
 const char *PS1DRVGetVersion(void)
 {
     if (ps1drv.ver[0] == '\0')
-    { //rom0:PS1VER is missing (not present in the earliest ROMs)
+    { // rom0:PS1VER is missing (not present in the earliest ROMs)
         return (OSDGetConsoleRegion() == CONSOLE_REGION_JAPAN ? "1.01" : "1.10");
     }
 

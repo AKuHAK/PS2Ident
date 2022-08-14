@@ -8,7 +8,6 @@
 #include <defs.h>
 
 #include "main.h"
-#include "sysinfo.h"
 #include "sysman_rpc.h"
 #include "romdrv.h"
 #include "rom.h"
@@ -49,7 +48,7 @@ static struct RomImg *romGetImageStat(const void *start, const void *end, struct
         {
             ImageStat->ImageStart  = start;
             ImageStat->RomdirStart = ptr;
-            size                   = file[1].size; //Get size of image from ROMDIR (after RESET).
+            size                   = file[1].size; // Get size of image from ROMDIR (after RESET).
             ImageStat->RomdirEnd   = (const void *)((const u8 *)ptr + size);
             return ImageStat;
         }
@@ -66,9 +65,9 @@ int ROMGetHardwareInfo(t_SysmanHardwareInfo *hwinfo)
     struct RomImg ImgStat;
     const struct RomImg *pImgStat;
 
-    //Determine the sizes of the boot ROM and DVD ROM chips.
-    //DEV2, BOOT ROM
-    hwinfo->BOOT_ROM.StartAddress = 0x1FC00000; //Hardwired
+    // Determine the sizes of the boot ROM and DVD ROM chips.
+    // DEV2, BOOT ROM
+    hwinfo->BOOT_ROM.StartAddress = 0x1FC00000; // Hardwired
     hwinfo->BOOT_ROM.crc16        = 0;
     hwinfo->BOOT_ROM.size         = GetSizeFromDelay(SSBUSC_DEV_BOOTROM);
     hwinfo->BOOT_ROM.IsExists     = 1;
@@ -76,7 +75,7 @@ int ROMGetHardwareInfo(t_SysmanHardwareInfo *hwinfo)
     if (hwinfo->BOOT_ROM.size > 0)
         printf("DEV2: 0x%lx-0x%lx\n", hwinfo->BOOT_ROM.StartAddress, hwinfo->BOOT_ROM.StartAddress + hwinfo->BOOT_ROM.size - 1);
 
-    //DEV1, DVD ROM
+    // DEV1, DVD ROM
     hwinfo->DVD_ROM.StartAddress = GetBaseAddress(SSBUSC_DEV_DVDROM);
     hwinfo->DVD_ROM.crc16        = 0;
     hwinfo->DVD_ROM.size         = GetSizeFromDelay(SSBUSC_DEV_DVDROM);
@@ -85,9 +84,9 @@ int ROMGetHardwareInfo(t_SysmanHardwareInfo *hwinfo)
     if (hwinfo->DVD_ROM.size > 0)
         printf("DEV1: 0x%lx-0x%lx\n", hwinfo->DVD_ROM.StartAddress, hwinfo->DVD_ROM.StartAddress + hwinfo->DVD_ROM.size - 1);
 
-    //Process virtual directories
-    //DEV2, BOOT ROM
-    //rom0
+    // Process virtual directories
+    // DEV2, BOOT ROM
+    // rom0
     pImgStat = romGetDevice(0);
     if (pImgStat != NULL)
     {
@@ -104,11 +103,11 @@ int ROMGetHardwareInfo(t_SysmanHardwareInfo *hwinfo)
         hwinfo->ROMs[0].crc16        = 0;
     }
 
-    //DEV1, DVD ROM
+    // DEV1, DVD ROM
     /*	The DVD ROM contains the rom1, rom2 and erom regions, and these regions exist in this order within the DVD ROM chip.
-		The rom2 region only exists on Chinese consoles.
-		TOOL consoles have DEV1 installed, but it contains no filesystem and contains hardware IDs instead.	*/
-    //rom1 (part of DEV1)
+        The rom2 region only exists on Chinese consoles.
+        TOOL consoles have DEV1 installed, but it contains no filesystem and contains hardware IDs instead.	*/
+    // rom1 (part of DEV1)
     pImgStat = romGetDevice(1);
     if (pImgStat != NULL)
     {
@@ -125,7 +124,7 @@ int ROMGetHardwareInfo(t_SysmanHardwareInfo *hwinfo)
         hwinfo->ROMs[1].crc16        = 0;
     }
 
-    //rom2 (part of DEV1)
+    // rom2 (part of DEV1)
     pImgStat = romGetDevice(2);
     if (pImgStat != NULL)
     {
@@ -143,11 +142,11 @@ int ROMGetHardwareInfo(t_SysmanHardwareInfo *hwinfo)
     }
 
     if (hwinfo->ROMs[1].IsExists)
-    { //If rom1 exists, erom may exist.
+    { // If rom1 exists, erom may exist.
         EROMGetHardwareInfo(&hwinfo->erom);
     }
     else
-    { //erom cannot exist if rom1 (hence EROMDRV) doesn't exist.
+    { // erom cannot exist if rom1 (hence EROMDRV) doesn't exist.
         hwinfo->erom.IsExists = 0;
     }
 
@@ -157,16 +156,16 @@ int ROMGetHardwareInfo(t_SysmanHardwareInfo *hwinfo)
         {
             if ((result = SysmanCalcROMRegionSize((void *)hwinfo->ROMs[i].StartAddress)) > 0)
             {
-                printf("rom%u:\t%u bytes\n", i, result);
+                printf("rom%u:\t%d bytes\n", i, result);
                 hwinfo->ROMs[i].size = result;
             }
         }
     }
 
     /* The set size of DEV1 may not be its real size.
-	   Now that the sizes of the individual regions are known, check that the size of DEV1 is fitting.
-	   The DVD ROM contains the rom1, rom2 and erom regions, and these regions exist in this order within the DVD ROM chip.
-	   The rom2 region only exists on Chinese consoles. */
+       Now that the sizes of the individual regions are known, check that the size of DEV1 is fitting.
+       The DVD ROM contains the rom1, rom2 and erom regions, and these regions exist in this order within the DVD ROM chip.
+       The rom2 region only exists on Chinese consoles. */
     if (hwinfo->erom.IsExists)
     {
         size = SysmanCalcROMChipSize(hwinfo->erom.StartAddress - hwinfo->ROMs[1].StartAddress + hwinfo->erom.size);
@@ -187,7 +186,7 @@ int ROMGetHardwareInfo(t_SysmanHardwareInfo *hwinfo)
 }
 
 /*! \brief Get pointer to head of module list, or next module in list.
- *  \ingroup iopmgr 
+ *  \ingroup iopmgr
  *
  *  \param cur_mod Pointer to module structure, or 0 to return the head.
  *  \return Pointer to module structure.
@@ -212,7 +211,7 @@ static ModuleInfo_t *smod_get_next_mod(ModuleInfo_t *cur_mod)
 }
 
 /*! \brief Get pointer to module structure for named module.
- *  \ingroup iopmgr 
+ *  \ingroup iopmgr
  *
  *  \param name Stringname of module (eg "atad_driver").
  *  \return Pointer to module structure.
@@ -248,7 +247,7 @@ static void *Get_EROM_RAM_Address(const void *EntryPoint)
     {
         if (*ptr == 0x03e00008)
         { // jr $ra
-            //End of function reached - scan failed.
+            // End of function reached - scan failed.
             break;
         }
         else if ((*ptr) >> 16 == 0x3c04)
@@ -287,11 +286,12 @@ static unsigned int mult_hi(unsigned int x, unsigned int y)
  */
 static unsigned int get_val_from_hash0(unsigned int hash)
 {
-    unsigned int v0, v1, ret = 0;
+    unsigned int ret = 0;
     int i;
 
     for (i = 0; i < 32; i += 4)
     {
+        unsigned int v0, v1;
         v0 = mult_hi(hash, HASHKEY0) >> 2;
         hash -= (((v0 << 3) + v0) << 1);
         v1 = hash - 1;

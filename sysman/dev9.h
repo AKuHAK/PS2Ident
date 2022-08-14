@@ -1,3 +1,5 @@
+#include "sysinfo.h"
+
 int dev9Initialize(void);
 
 int dev9GetHardwareInfo(t_PS2DBSSBUSHardwareInfo *devinfo);

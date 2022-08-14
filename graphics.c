@@ -227,7 +227,7 @@ static int LoadPNGImage(struct UIDrawGlobal *gsGlobal, GS_IMAGE *Texture, GS_IMA
 
         free(row_pointers);
 
-        //Upload CLUT to VRAM
+        // Upload CLUT to VRAM
         Clut->vram_addr = GsVramAllocTextureBuffer(Clut->width, Clut->height, Clut->psm);
         GsLoadImage(clut_mem, Clut);
         free(clut_mem);
@@ -246,7 +246,7 @@ static int LoadPNGImage(struct UIDrawGlobal *gsGlobal, GS_IMAGE *Texture, GS_IMA
     Texture->vram_addr  = GsVramAllocTextureBuffer(Texture->width, Texture->height, Texture->psm);
     Texture->vram_width = ((Texture->width + 63) & ~63) / 64;
 
-    //Upload texture.
+    // Upload texture.
     GsLoadImage(mem, Texture);
     GsTextureFlush();
     free(mem);
@@ -306,7 +306,7 @@ void DrawSetFilterMode(struct UIDrawGlobal *gsGlobal, int mode)
 {
     u64 *p;
 
-    //Use the uncached segment, to avoid needing to flush the data cache.
+    // Use the uncached segment, to avoid needing to flush the data cache.
     p             = (u64 *)UNCACHED_SEG(GsGifPacketsAlloc(&gsGlobal->giftable, 2));
     LastGIFPacket = (GS_GIF_TAG *)p;
 
@@ -318,12 +318,12 @@ void DrawLine(struct UIDrawGlobal *gsGlobal, short int x1, short int y1, short i
 {
     u64 *p;
 
-    //Use the uncached segment, to avoid needing to flush the data cache.
-    p             = (u64 *)UNCACHED_SEG(GsGifPacketsAlloc(&gsGlobal->giftable, 3)); //Allocate 3 qwords for 1 untextured line
+    // Use the uncached segment, to avoid needing to flush the data cache.
+    p             = (u64 *)UNCACHED_SEG(GsGifPacketsAlloc(&gsGlobal->giftable, 3)); // Allocate 3 qwords for 1 untextured line
     LastGIFPacket = (GS_GIF_TAG *)p;
 
     gs_setGIF_TAG(((GS_GIF_TAG *)&p[0]), 1, 0, 0, 0, GS_GIF_REGLIST, 4, gs_g_prim | gs_g_rgbaq << 4 | gs_g_xyz2 << 8 | gs_g_xyz2 << 12);
-    //prim_type = GS_PRIM_LINE, abe = 1
+    // prim_type = GS_PRIM_LINE, abe = 1
     gs_setPRIM(((GS_PRIM *)&p[2]), GS_PRIM_LINE, 0, 0, 0, 1, 0, 0, 0, 0);
     *(GS_RGBAQ *)&p[3] = rgbaq;
     gs_setXYZ2(((GS_XYZ *)&p[4]), (gsGlobal->draw_env.offset_x + x1) << 4, (gsGlobal->draw_env.offset_y + y1) << 4, z << 4);
@@ -334,12 +334,12 @@ void DrawSprite(struct UIDrawGlobal *gsGlobal, short int x1, short int y1, short
 {
     u64 *p;
 
-    //Use the uncached segment, to avoid needing to flush the data cache.
-    p             = (u64 *)UNCACHED_SEG(GsGifPacketsAlloc(&gsGlobal->giftable, 3)); //Allocate 3 qwords for 1 untextured sprite
+    // Use the uncached segment, to avoid needing to flush the data cache.
+    p             = (u64 *)UNCACHED_SEG(GsGifPacketsAlloc(&gsGlobal->giftable, 3)); // Allocate 3 qwords for 1 untextured sprite
     LastGIFPacket = (GS_GIF_TAG *)p;
 
     gs_setGIF_TAG(((GS_GIF_TAG *)&p[0]), 1, 0, 0, 0, GS_GIF_REGLIST, 4, gs_g_prim | gs_g_rgbaq << 4 | gs_g_xyz2 << 8 | gs_g_xyz2 << 12);
-    //prim_type = GS_PRIM_SPRITE, abe = 1
+    // prim_type = GS_PRIM_SPRITE, abe = 1
     gs_setPRIM(((GS_PRIM *)&p[2]), GS_PRIM_SPRITE, 0, 0, 0, 1, 0, 0, 0, 0);
     *(GS_RGBAQ *)&p[3] = rgbaq;
     gs_setXYZ2(((GS_XYZ *)&p[4]), (gsGlobal->draw_env.offset_x + x1) << 4, (gsGlobal->draw_env.offset_y + y1) << 4, z << 4);
@@ -350,13 +350,13 @@ void DrawSpriteTextured(struct UIDrawGlobal *gsGlobal, GS_IMAGE *texture, short 
 {
     u64 *p;
 
-    //Use the uncached segment, to avoid needing to flush the data cache.
-    p             = (u64 *)UNCACHED_SEG(GsGifPacketsAlloc(&gsGlobal->giftable, 5)); //Allocate 5 qwords for 1 textured sprite
+    // Use the uncached segment, to avoid needing to flush the data cache.
+    p             = (u64 *)UNCACHED_SEG(GsGifPacketsAlloc(&gsGlobal->giftable, 5)); // Allocate 5 qwords for 1 textured sprite
     LastGIFPacket = (GS_GIF_TAG *)p;
 
     gs_setGIF_TAG(((GS_GIF_TAG *)&p[0]), 1, 0, 0, 0, GS_GIF_REGLIST, 8, gs_g_tex0_1 | gs_g_prim << 4 | gs_g_rgbaq << 8 | gs_g_uv << 12 | gs_g_xyz2 << 16 | gs_g_uv << 20 | gs_g_xyz2 << 24 | gif_rd_nop << 28);
     gs_setTEX0_1(((GS_TEX0 *)&p[2]), texture->vram_addr, texture->vram_width, texture->psm, twh(texture->width), twh(texture->height), 1, GS_TEX_MODULATE, 0, 0, 0, 0, 0);
-    //prim_type = GS_PRIM_SPRITE, tme = 1, fst = 1, abe = 1
+    // prim_type = GS_PRIM_SPRITE, tme = 1, fst = 1, abe = 1
     gs_setPRIM(((GS_PRIM *)&p[3]), GS_PRIM_SPRITE, 0, 1, 0, 1, 0, 1, 0, 0);
     *(GS_RGBAQ *)&p[4] = rgbaq;
     gs_setUV(((GS_UV *)&p[5]), u1 << 4 | 8, v1 << 4 | 8);
@@ -370,13 +370,13 @@ void DrawSpriteTexturedClut(struct UIDrawGlobal *gsGlobal, GS_IMAGE *texture, GS
 {
     u64 *p;
 
-    //Use the uncached segment, to avoid needing to flush the data cache.
-    p             = (u64 *)UNCACHED_SEG(GsGifPacketsAlloc(&gsGlobal->giftable, 5)); //Allocate 5 qwords for 1 textured sprite with CLUT
+    // Use the uncached segment, to avoid needing to flush the data cache.
+    p             = (u64 *)UNCACHED_SEG(GsGifPacketsAlloc(&gsGlobal->giftable, 5)); // Allocate 5 qwords for 1 textured sprite with CLUT
     LastGIFPacket = (GS_GIF_TAG *)p;
 
     gs_setGIF_TAG(((GS_GIF_TAG *)&p[0]), 1, 0, 0, 0, GS_GIF_REGLIST, 8, gs_g_tex0_1 | gs_g_prim << 4 | gs_g_rgbaq << 8 | gs_g_uv << 12 | gs_g_xyz2 << 16 | gs_g_uv << 20 | gs_g_xyz2 << 24 | gif_rd_nop << 28);
     gs_setTEX0_1(((GS_TEX0 *)&p[2]), texture->vram_addr, texture->vram_width, texture->psm, twh(texture->width), twh(texture->height), 1, GS_TEX_MODULATE, clut->vram_addr, clut->psm, 0, 0, 1);
-    //prim_type = GS_PRIM_SPRITE, tme = 1, fst = 1, abe = 1
+    // prim_type = GS_PRIM_SPRITE, tme = 1, fst = 1, abe = 1
     gs_setPRIM(((GS_PRIM *)&p[3]), GS_PRIM_SPRITE, 0, 1, 0, 1, 0, 1, 0, 0);
     *(GS_RGBAQ *)&p[4] = rgbaq;
     gs_setUV(((GS_UV *)&p[5]), u1 << 4 | 8, v1 << 4 | 8);
@@ -408,35 +408,35 @@ struct IconLayout
 
 static const struct IconLayout ButtonLayoutParameters[BUTTON_TYPE_COUNT] =
     {
-        {22, 0, 22, 22},    //Circle
-        {0, 0, 22, 22},     //Cross
-        {44, 0, 22, 22},    //Square
-        {66, 0, 22, 22},    //Triangle
-        {0, 22, 28, 20},    //L1
-        {56, 22, 28, 20},   //R1
-        {28, 22, 28, 20},   //L2
-        {84, 22, 28, 20},   //R2
-        {150, 42, 30, 30},  //L3
-        {150, 72, 30, 30},  //R3
-        {140, 22, 29, 19},  //START
-        {112, 22, 28, 19},  //SELECT
-        {120, 72, 30, 30},  //RSTICK
-        {0, 72, 30, 30},    //UP RSTICK
-        {30, 72, 30, 30},   //DOWN RSTICK
-        {60, 72, 30, 30},   //LEFT RSTICK
-        {90, 72, 30, 30},   //RIGHT RSTICK
-        {120, 42, 30, 30},  //LSTICK
-        {0, 42, 30, 30},    //UP LSTICK
-        {30, 42, 30, 30},   //DOWN LSTICK
-        {60, 42, 30, 30},   //LEFT LSTICK
-        {90, 42, 30, 30},   //RIGHT LSTICK
-        {104, 102, 26, 26}, //DPAD
-        {130, 102, 26, 26}, //LR-DPAD
-        {156, 102, 26, 26}, //UD-DPAD
-        {0, 102, 26, 26},   //UP DPAD
-        {26, 102, 26, 26},  //DOWN DPAD
-        {52, 102, 26, 26},  //LEFT DPAD
-        {78, 102, 26, 26},  //RIGHT DPAD
+        {22, 0, 22, 22},    // Circle
+        {0, 0, 22, 22},     // Cross
+        {44, 0, 22, 22},    // Square
+        {66, 0, 22, 22},    // Triangle
+        {0, 22, 28, 20},    // L1
+        {56, 22, 28, 20},   // R1
+        {28, 22, 28, 20},   // L2
+        {84, 22, 28, 20},   // R2
+        {150, 42, 30, 30},  // L3
+        {150, 72, 30, 30},  // R3
+        {140, 22, 29, 19},  // START
+        {112, 22, 28, 19},  // SELECT
+        {120, 72, 30, 30},  // RSTICK
+        {0, 72, 30, 30},    // UP RSTICK
+        {30, 72, 30, 30},   // DOWN RSTICK
+        {60, 72, 30, 30},   // LEFT RSTICK
+        {90, 72, 30, 30},   // RIGHT RSTICK
+        {120, 42, 30, 30},  // LSTICK
+        {0, 42, 30, 30},    // UP LSTICK
+        {30, 42, 30, 30},   // DOWN LSTICK
+        {60, 42, 30, 30},   // LEFT LSTICK
+        {90, 42, 30, 30},   // RIGHT LSTICK
+        {104, 102, 26, 26}, // DPAD
+        {130, 102, 26, 26}, // LR-DPAD
+        {156, 102, 26, 26}, // UD-DPAD
+        {0, 102, 26, 26},   // UP DPAD
+        {26, 102, 26, 26},  // DOWN DPAD
+        {52, 102, 26, 26},  // LEFT DPAD
+        {78, 102, 26, 26},  // RIGHT DPAD
 };
 
 void DrawButtonLegendWithFeedback(struct UIDrawGlobal *gsGlobal, struct ClutImage *PadGraphicsTexture, unsigned char ButtonType, short int x, short int y, short int z, short int *xRel)
@@ -459,13 +459,13 @@ void DrawButtonLegend(struct UIDrawGlobal *gsGlobal, struct ClutImage *PadGraphi
 
 static const struct IconLayout DeviceIcons[DEVICE_TYPE_COUNT] =
     {
-        {0, 1, 19, 22},   //Folder
-        {19, 1, 18, 22},  //File
-        {37, 1, 21, 22},  //Disk
-        {58, 0, 17, 23},  //USB Disk
-        {75, 2, 20, 21},  //ROM
-        {95, 2, 17, 21},  //SD Card
-        {112, 1, 22, 22}, //Disc
+        {0, 1, 19, 22},   // Folder
+        {19, 1, 18, 22},  // File
+        {37, 1, 21, 22},  // Disk
+        {58, 0, 17, 23},  // USB Disk
+        {75, 2, 20, 21},  // ROM
+        {95, 2, 17, 21},  // SD Card
+        {112, 1, 22, 22}, // Disc
 };
 
 void DrawDeviceIconWithFeedback(struct UIDrawGlobal *gsGlobal, GS_IMAGE *IconTexture, unsigned char icon, short int x, short int y, short int z, short int *xRel)

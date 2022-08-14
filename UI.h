@@ -6,7 +6,7 @@
 #define UI_FONT_HEIGHT            FNT_CHAR_HEIGHT
 #define UI_TAB_STOPS              FNT_TAB_STOPS
 
-//In VSYNC ticks
+// In VSYNC ticks
 #define UI_PAD_REPEAT_START_DELAY 20
 #define UI_PAD_REPEAT_DELAY       5
 
@@ -21,7 +21,7 @@ enum MENU_ITEM
     MITEM_DOT,
     MITEM_SLASH,
     MITEM_PROGRESS,
-    MITEM_LABEL, //Last non-selectable item.
+    MITEM_LABEL, // Last non-selectable item.
 
     MITEM_STRING,
     MITEM_VALUE,
@@ -48,21 +48,21 @@ enum MENU_ITEM_FORMAT
 #define MITEM_FLAG_HIDDEN      0x01
 #define MITEM_FLAG_READONLY    0x02
 #define MITEM_FLAG_DISABLED    0x04
-#define MITEM_FLAG_UNIT_PREFIX 0x08 //For formats with a unit prefix, show it.
-#define MITEM_FLAG_POS_ABS     0x10 //Coordinates are absolute.
-#define MITEM_FLAG_POS_MID     0x20 //Aligned to the middle. Only for buttons.
+#define MITEM_FLAG_UNIT_PREFIX 0x08 // For formats with a unit prefix, show it.
+#define MITEM_FLAG_POS_ABS     0x10 // Coordinates are absolute.
+#define MITEM_FLAG_POS_MID     0x20 // Aligned to the middle. Only for buttons.
 
 struct UIMenuItem
 {
     unsigned char type;
-    unsigned char id; //ID 0 is reserved for items that do not need to be tracked (i.e. labels).
+    unsigned char id; // ID 0 is reserved for items that do not need to be tracked (i.e. labels).
     unsigned char flags;
     unsigned char format;
     unsigned char width;
     short int x;
     short int y;
     union
-    { //Limits do not have to be specified, if the values are not going to be changeable by the user.
+    { // Limits do not have to be specified, if the values are not going to be changeable by the user.
         struct
         {
             int value;

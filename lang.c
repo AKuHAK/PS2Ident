@@ -1,3 +1,5 @@
+#include "lang.h"
+
 static const char *DefaultLanguageStringTable[SYS_UI_MSG_COUNT] = {
     "Quit program?",
     "Please wait...",

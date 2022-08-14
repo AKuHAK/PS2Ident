@@ -1,3 +1,5 @@
+#include "sysinfo.h"
+
 #define iLink_INTR0_DRFR           0x00000001
 #define iLink_INTR0_DRFO           0x00000002
 #define iLink_INTR0_TxStk          0x00000040

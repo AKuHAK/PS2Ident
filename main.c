@@ -72,12 +72,11 @@ static unsigned char ConsoleRegionData[13];
 static int LoadEROMDRV(void)
 {
     char eromdrv[] = "rom1:EROMDRV?";
-    int result;
 
-    //Handle region-specific DVD Player of newer consoles.
+    // Handle region-specific DVD Player of newer consoles.
     if (OSDGetDVDPlayerRegion(&eromdrv[12]) == 0 || eromdrv[12] != '\0')
     {
-        eromdrv[12] = '\0'; //Replace '?' with a NULL.
+        eromdrv[12] = '\0'; // Replace '?' with a NULL.
     }
 
     return SifLoadModuleEncrypted(eromdrv, 0, NULL);
@@ -104,11 +103,11 @@ static void SystemInitThread(struct SystemInitParams *SystemInitParams)
     SifLoadModule("rom0:ADDDRV", 0, NULL);
     SifLoadModule("rom0:ADDROM2", 0, NULL);
 
-    //Initialize PlayStation Driver (PS1DRV)
+    // Initialize PlayStation Driver (PS1DRV)
     PS1DRVInit();
 
-    //Initialize ROM DVD player.
-    //It is normal for this to fail on consoles that have no DVD ROM chip (i.e. DEX or the SCPH-10000/SCPH-15000).
+    // Initialize ROM DVD player.
+    // It is normal for this to fail on consoles that have no DVD ROM chip (i.e. DEX or the SCPH-10000/SCPH-15000).
     DVDPlayerInit();
 
     LoadEROMDRV();
@@ -160,7 +159,9 @@ int main(int argc, char *argv[])
     }
 
     SifInitRpc(0);
-    while (!SifIopRebootBuffer(IOPRP_img, size_IOPRP_img)) {};
+    while (!SifIopRebootBuffer(IOPRP_img, size_IOPRP_img))
+    {
+    };
 
     memset(&SystemInformation, 0, sizeof(SystemInformation));
 
@@ -185,7 +186,9 @@ int main(int argc, char *argv[])
     AddIntcHandler(kINTC_VBLANK_START, &VBlankStartHandler, 0);
     EnableIntc(kINTC_VBLANK_START);
 
-    while (!SifIopSync()) {};
+    while (!SifIopSync())
+    {
+    };
 
     SifInitRpc(0);
     SifInitIopHeap();
@@ -208,10 +211,10 @@ int main(int argc, char *argv[])
     sceCdInit(SCECdINoD);
     cdInitAdd();
 
-    //Initialize system paths.
+    // Initialize system paths.
     OSDInitSystemPaths();
 
-    //Initialize ROM version (must be done first).
+    // Initialize ROM version (must be done first).
     OSDInitROMVER();
 
     if (InitializeUI(0) != 0)

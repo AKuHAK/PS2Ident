@@ -11,11 +11,11 @@ extern void *_gp;
 int GetBootDeviceID(void)
 {
     static int BootDevice = -2;
-    char path[256];
     int result;
 
     if (BootDevice < BOOT_DEVICE_UNKNOWN)
     {
+        char path[256];
         getcwd(path, sizeof(path));
 
         if (!strncmp(path, "mc0:", 4))
@@ -42,7 +42,6 @@ int GetBootDeviceID(void)
 int RemoveFolder(const char *path)
 {
     fio_dirent_t dirent;
-    char *fullpath;
     int fd, result;
 
     result = 0;
@@ -50,6 +49,7 @@ int RemoveFolder(const char *path)
     {
         while (fioDread(fd, &dirent) > 0 && result >= 0)
         {
+            char *fullpath;
             if (!strcmp(dirent.name, ".") || !strcmp(dirent.name, ".."))
                 continue;
 

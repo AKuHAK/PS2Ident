@@ -1,5 +1,8 @@
 #define GS_SETREG_RGBAQ(r, g, b, a, q) \
-    (GS_RGBAQ) { (r), (g), (b), (a), (q) }
+    (GS_RGBAQ)                         \
+    {                                  \
+        (r), (g), (b), (a), (q)        \
+    }
 
 #define GS_WHITE       GS_SETREG_RGBAQ(0x80, 0x80, 0x80, 0x80, 0x00)
 #define GS_BLACK       GS_SETREG_RGBAQ(0x00, 0x00, 0x00, 0x80, 0x00)
@@ -68,7 +71,7 @@ enum DEVICE_TYPE
 
 #define DEVICE_ICON_SCALE      2
 
-//Special button types
+// Special button types
 #define BUTTON_TYPE_SYS_SELECT 0x40
 #define BUTTON_TYPE_SYS_CANCEL 0x41
 

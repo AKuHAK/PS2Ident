@@ -22,19 +22,19 @@ void SysmanDeinit(void)
     memset(&SYSMAN_rpc_cd, 0, sizeof(SifRpcClientData_t));
 }
 
-/*	Description:	Reads data from the specified region of memory in IOP address space.
-	Arguments:
-		const void *MemoryStart	-> The address of the region of memory to read from (Must be aligned!).
-		void *buffer		-> A pointer to the buffer for storing the data read.
-		unsigned int NumBytes	-> The number of bytes of data to read.
-		int mode		-> Whether to not block (1 = asynchronous operation).
-	Returned values:
-		<0	-> An error code, multiplied by -1.
-		0	-> The operation completed successfully.
+/*    Description:    Reads data from the specified region of memory in IOP address space.
+    Arguments:
+        const void *MemoryStart    -> The address of the region of memory to read from (Must be aligned!).
+        void *buffer        -> A pointer to the buffer for storing the data read.
+        unsigned int NumBytes    -> The number of bytes of data to read.
+        int mode        -> Whether to not block (1 = asynchronous operation).
+    Returned values:
+        <0    -> An error code, multiplied by -1.
+        0    -> The operation completed successfully.
 */
 int SysmanReadMemory(const void *MemoryStart, void *buffer, unsigned int NumBytes, int mode)
 {
-    int RPC_res;
+    int RPC_res                                                     = 0;
 
     ((struct MemoryAccessParameters *)TransmitBuffer)->StartAddress = (void *)MemoryStart;
     ((struct MemoryAccessParameters *)TransmitBuffer)->buffer       = buffer;
@@ -49,19 +49,19 @@ int SysmanReadMemory(const void *MemoryStart, void *buffer, unsigned int NumByte
     return RPC_res;
 }
 
-/*	Description:	Writes data to the specified region of memory in IOP address space.
-	Arguments:
-		void *MemoryStart	-> The address of the region of memory write to.
-		const void *buffer	-> A pointer to the buffer that contains the data to be written (Must be aligned and flushed!).
-		unsigned int NumBytes	-> The number of bytes of data to write.
-		int mode		-> Whether to not block (1 = asynchronous operation).
-	Returned values:
-		<0	-> An error code, multiplied by -1.
-		0	-> The operation completed successfully.
+/*    Description:    Writes data to the specified region of memory in IOP address space.
+    Arguments:
+        void *MemoryStart    -> The address of the region of memory write to.
+        const void *buffer    -> A pointer to the buffer that contains the data to be written (Must be aligned and flushed!).
+        unsigned int NumBytes    -> The number of bytes of data to write.
+        int mode        -> Whether to not block (1 = asynchronous operation).
+    Returned values:
+        <0    -> An error code, multiplied by -1.
+        0    -> The operation completed successfully.
 */
 int SysmanWriteMemory(void *MemoryStart, const void *buffer, unsigned int NumBytes, int mode)
 {
-    int RPC_res;
+    int RPC_res                                                     = 0;
 
     ((struct MemoryAccessParameters *)TransmitBuffer)->StartAddress = MemoryStart;
     ((struct MemoryAccessParameters *)TransmitBuffer)->buffer       = (void *)buffer;
@@ -81,17 +81,19 @@ int SysmanSync(int mode)
     if (mode)
         return SifCheckStatRpc(&SYSMAN_rpc_cd);
     else
-        while (SifCheckStatRpc(&SYSMAN_rpc_cd) != 0) {};
+        while (SifCheckStatRpc(&SYSMAN_rpc_cd) != 0)
+        {
+        };
 
     return 0;
 }
 
-/*	Description:	Calculates the size of the IOPRP image at the specified address in IOP address space.
-	Arguments:
-		const void *ROMStart	-> The address of the IOPRP image, in IOP address space.
-	Returned values:
-		<0	-> An error code, multiplied by -1.
-		0	-> The operation completed successfully.
+/*    Description:    Calculates the size of the IOPRP image at the specified address in IOP address space.
+    Arguments:
+        const void *ROMStart    -> The address of the IOPRP image, in IOP address space.
+    Returned values:
+        <0    -> An error code, multiplied by -1.
+        0    -> The operation completed successfully.
 */
 int SysmanCalcROMRegionSize(const void *ROMStart)
 {
@@ -105,12 +107,12 @@ int SysmanCalcROMRegionSize(const void *ROMStart)
     return RPC_res;
 }
 
-/*	Description:	Calculates the size of the ROM chip containing the specified image.
-	Arguments:
-		unsigned int RegionSize	-> The size of the image in the ROM chip, to calculate its size of.
-	Returned values:
-		<0	-> An error code, multiplied by -1.
-		0	-> The operation completed successfully.
+/*    Description:    Calculates the size of the ROM chip containing the specified image.
+    Arguments:
+        unsigned int RegionSize    -> The size of the image in the ROM chip, to calculate its size of.
+    Returned values:
+        <0    -> An error code, multiplied by -1.
+        0    -> The operation completed successfully.
 */
 int SysmanCalcROMChipSize(unsigned int RegionSize)
 {

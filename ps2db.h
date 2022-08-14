@@ -26,8 +26,8 @@ typedef struct PS2DBiLinkInformation
 
 typedef struct PS2DBSPEEDDevInformation
 {
-    u16 rev1; //revision
-    u16 rev3; //caps
+    u16 rev1; // revision
+    u16 rev3; // caps
     u16 rev8;
     u8 SMAP_PHY_VMDL;
     u8 SMAP_PHY_REV;
@@ -108,7 +108,7 @@ struct PS2IDBMainboardEntry
     t_PS2DBUSBHardwareInfo usb;
     t_PS2DBSPU2HardwareInfo spu2;
 
-    u32 MachineType; //The value returned through the MachineType() syscall.
+    u32 MachineType; // The value returned through the MachineType() syscall.
     u16 ROMGEN_MonthDate;
     u16 ROMGEN_Year;
     u16 MPUBoardID;
@@ -122,7 +122,7 @@ struct PS2IDBMainboardEntry
     u8 ConModelID[2];
     u8 MRenewalDate[5];
     u8 status;
-    //Known as "ADD0x10" in the SONY service tools, it's word 0x10 of the EEPROM from older consoles and word 0x01 of Dragon units. It's used to identify important revisions.
+    // Known as "ADD0x10" in the SONY service tools, it's word 0x10 of the EEPROM from older consoles and word 0x01 of Dragon units. It's used to identify important revisions.
     u16 ADD010;
     s8 ContributorName[16];
     u16 padding;
@@ -135,7 +135,7 @@ struct PS2IDBHeader
     char magic[4]; //"P2DB"
     u16 version;
     u16 components;
-    //Followed by component number of 32-bit offsets, which point to the start of a struct PS2IDBComponentTable entry and its entries.
+    // Followed by component number of 32-bit offsets, which point to the start of a struct PS2IDBComponentTable entry and its entries.
 };
 
 struct PS2IDBComponentEntry

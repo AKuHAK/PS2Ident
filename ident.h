@@ -1,3 +1,5 @@
+#include "ps2db.h"
+
 struct RequiredFileSpaceStat
 {
     unsigned int IsFile;

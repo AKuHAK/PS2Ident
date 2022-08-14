@@ -10,3 +10,9 @@ background_img.c
 buttons.c
 devices.c
 IOPRP_img.c
+
+.*
+
+!.github
+!.editorconfig
+!.clang-format

@@ -73,7 +73,6 @@ int GetHasDeviceSufficientSpace(const char *device, int unit, const struct Requi
 
 int HasMcUnitSufficientSpace(int unit, const struct RequiredFileSpaceStat *RequiredSpaceStats, unsigned int NumFileEntries)
 {
-    unsigned int TotalRequiredSpace, AvailableSpace, NumFiles, NumDirectories, i;
     int type, free, format, result;
 
     type = MC_TYPE_NONE;
@@ -83,6 +82,7 @@ int HasMcUnitSufficientSpace(int unit, const struct RequiredFileSpaceStat *Requi
 
         if (type == MC_TYPE_PS2)
         {
+            unsigned int TotalRequiredSpace, AvailableSpace, NumFiles, NumDirectories, i;
             NumFiles = NumDirectories = 0;
             TotalRequiredSpace        = 0;
 
@@ -130,7 +130,7 @@ static void DevicePollingThread(void)
     done = 0;
     while (!done)
     {
-        //Process commands.
+        // Process commands.
         if (DevicePollingThreadCommand != DEVICE_POLLING_THREAD_CMD_NONE)
         {
             if (DevicePollingThreadCommand == DEVICE_POLLING_THREAD_CMD_STOP)
@@ -143,7 +143,7 @@ static void DevicePollingThread(void)
             DevicePollingThreadCommand = DEVICE_POLLING_THREAD_CMD_NONE;
         }
 
-        //Update the status of all units of all devices.
+        // Update the status of all units of all devices.
         MassUnitStatus[0] = IsMassUnitReady(0);
         McUnitStatus[0]   = IsMcUnitReady(0);
         McUnitStatus[1]   = IsMcUnitReady(1);
@@ -162,7 +162,7 @@ int StartDevicePollingThread(void)
 int StopDevicePollingThread(void)
 {
     DevicePollingThreadCommand = DEVICE_POLLING_THREAD_CMD_STOP;
-    SleepThread(); //Wait for acknowledgement.
+    SleepThread(); // Wait for acknowledgement.
 
     if (DevicePollingThreadID >= 0)
     {

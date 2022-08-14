@@ -10,7 +10,6 @@
 #include <thbase.h>
 
 #include "main.h"
-#include "sysinfo.h"
 #include "dev9.h"
 
 static int (*pdev9GetEEPROM)(u16 *buf) = NULL;
@@ -46,7 +45,7 @@ static int _smap_read_phy(unsigned int address)
     } while (i < 100);
 
     if (i >= 100)
-        DEBUG_PRINTF("smap: %s: > %d ms\n", "_smap_read_phy", i);
+        DEBUG_PRINTF("smap: %s: > %u ms\n", "_smap_read_phy", i);
 
     return result;
 }
@@ -59,8 +58,8 @@ static inline int GetPHYData(t_PS2DBSSBUSHardwareInfo *devinfo)
     idr2                         = _smap_read_phy(SMAP_DsPHYTER_PHYIDR2);
 
     /*	IDR1's value is generated with OUI<<2>>8, so do the reverse.
-		The bits are swapped around, and the most significant 2 bits are omitted.
-	*/
+        The bits are swapped around, and the most significant 2 bits are omitted.
+    */
     devinfo->SPEED.SMAP_PHY_OUI  = idr1 << 6 | (idr2 >> 10);
     devinfo->SPEED.SMAP_PHY_VMDL = idr2 >> 4 & 0x3F;
     devinfo->SPEED.SMAP_PHY_REV  = idr2 & SMAP_PHY_IDR2_REV_MSK;
@@ -147,11 +146,11 @@ int dev9GetHardwareInfo(t_PS2DBSSBUSHardwareInfo *devinfo)
 
 int dev9GetSPEEDMACAddress(unsigned char *MACAddress)
 {
-    unsigned short int data[3];
     int result;
 
     if (pdev9GetEEPROM != NULL)
     {
+        unsigned short int data[3];
         if ((result = pdev9GetEEPROM(data)) == 0)
         {
             memcpy(MACAddress, data, 6);
