@@ -648,42 +648,40 @@ const char *GetChassisDesc(const struct PS2IDBMainboardEntry *SystemInformation)
         description = "A-chassis"; // SCPH-10000 and SCPH-15000
     else if (!strcmp(SystemInformation->MainboardName, "GH-003") && strncmp("0101", SystemInformation->romver, 4))
         description = "A-chassis+"; // SCPH-18000 with GH-003
-    else if (!strcmp(SystemInformation->MainboardName, "GH-008"))
-        description = "AB-chassis"; // SCPH-18000
     else if (!strcmp(SystemInformation->MainboardName, "GH-004") || !strcmp(SystemInformation->MainboardName, "GH-005"))
         description = "B-chassis"; // SCPH-30000
     else if (!strcmp(SystemInformation->MainboardName, "GH-006") || !strcmp(SystemInformation->MainboardName, "GH-007"))
         description = "C-chassis"; // SCPH-30000
-    else if (!strcmp(SystemInformation->MainboardName, "GH-010") || !strcmp(SystemInformation->MainboardName, "GH-011") || !strcmp(SystemInformation->MainboardName, "GH-012") || !strcmp(SystemInformation->MainboardName, "GH-013") || !strcmp(SystemInformation->MainboardName, "GH-014") || !strcmp(SystemInformation->MainboardName, "GH-016"))
+    else if (!strcmp(SystemInformation->MainboardName, "GH-010") || !strcmp(SystemInformation->MainboardName, "GH-011") || !strcmp(SystemInformation->MainboardName, "GH-012") || !strcmp(SystemInformation->MainboardName, "GH-013") || !strcmp(SystemInformation->MainboardName, "GH-014"))
         description = "D-chassis"; // SCPH-30000, SCPH-30000R and SCPH-35000
-    else if (!strcmp(SystemInformation->MainboardName, "GH-015"))
-        description = "F-chassis"; // SCPH-30000 and SCPH-30000R
     else if (!strcmp(SystemInformation->MainboardName, "GH-016"))
-        description = "DR-chassis"; // SCPH-30000
-    else if (!strcmp(SystemInformation->MainboardName, "GH-017") || !strcmp(SystemInformation->MainboardName, "GH-019") || !strcmp(SystemInformation->MainboardName, "GH-022"))
-        description = "G-chassis"; // SCPH-37000 and SCPH-39000
-    else if (!strcmp(SystemInformation->MainboardName, "GH-023"))
-        description = "H-chassis"; // SCPH-50000
-    else if (!strcmp(SystemInformation->MainboardName, "GH-026"))
-        description = "I-chassis"; // SCPH-50000a
-    else if (!strcmp(SystemInformation->MainboardName, "GH-029"))
-        description = "J-chassis"; // SCPH-50000b
-    else if (!strncmp(SystemInformation->MainboardName, "GH-032", 6) || !strncmp(SystemInformation->MainboardName, "GH-035", 6))
-        description = "K-chassis"; // SCPH-70000
-    else if (!strncmp(SystemInformation->MainboardName, "GH-037", 6) || !strncmp(SystemInformation->MainboardName, "GH-040", 6) || !strncmp(SystemInformation->MainboardName, "GH-041", 6))
-        description = "L-chassis"; // SCPH-75000
-    else if (!strncmp(SystemInformation->MainboardName, "GH-051", 6) || !strncmp(SystemInformation->MainboardName, "GH-052", 6))
-        description = "M-chassis"; // SCPH-77000
-    else if (!strncmp(SystemInformation->MainboardName, "GH-061", 6) || !strncmp(SystemInformation->MainboardName, "GH-062", 6))
-        description = "N-chassis"; // SCPH-79000
-    else if (!strncmp(SystemInformation->MainboardName, "GH-070", 6) || !strncmp(SystemInformation->MainboardName, "GH-071", 6))
-        description = "P-chassis"; // SCPH-90000, TVcombo
-    else if (!strncmp(SystemInformation->MainboardName, "GH-072", 6))
-        description = "R-chassis"; // SCPH-90000
-    else if (!strncmp(SystemInformation->MainboardName, "XPD-", 4))
-        description = "X-chassis"; // PSX
-    else if (!strncmp(SystemInformation->romver, "0170", 4) || !strncmp(SystemInformation->romver, "0190", 4))
-        description = "Sticker"; // SCPH-5xxxx can be retrieved from sticker
+        description = "DF-chassis"; // SCPH-30000, GH-016
+    else if ((SystemInformation->mainboard.ADD010 & 0xfffe) == 0x0800)
+        description = "AB-chassis"; // SCPH-18000, GH-008, ADD0x10 0x0801
+    else if ((SystemInformation->mainboard.ADD010 & 0xffcf) == 0xA809)
+        description = "F-chassis"; // SCPH-30000 and SCPH-30000R, ADD0x10 0xa809, 0xa829, GH-015
+    else if ((SystemInformation->mainboard.ADD010 & 0xffcf) == 0xB009)
+        description = "G-chassis"; // SCPH-37000 and SCPH-39000, ADD0x10 0xb009, 0xb029, GH-017, GH-018, GH-019, GH-022
+    else if ((SystemInformation->mainboard.MECHACONVersion[1] == 5) && SystemInformation->DVDPlayerVer[0] == '3' && SystemInformation->DVDPlayerVer[3] == '0')
+        description = "H-chassis"; // SCPH-50000, DVD ver 3.00, GH-023
+    else if ((SystemInformation->mainboard.MECHACONVersion[1] == 5) && SystemInformation->DVDPlayerVer[0] == '3' && SystemInformation->DVDPlayerVer[3] == '2')
+        description = "I-chassis"; // SCPH-50000, DVD ver 3.02, GH-026
+    else if ((SystemInformation->mainboard.MECHACONVersion[1] == 5) && SystemInformation->DVDPlayerVer[0] == '3' && (SystemInformation->DVDPlayerVer[3] == '3' || SystemInformation->DVDPlayerVer[3] == '4'))
+        description = "J-chassis"; // SCPH-50000, DVD ver 3.03-3.04, GH-026
+    else if ((SystemInformation->mainboard.MECHACONVersion[1] == 6) && (SystemInformation->mainboard.MECHACONVersion[2] < 6))
+        description = "K-chassis"; // SCPH-70000, GH-032-xx, GH-035-xx, Mechacon 6.0-6.5
+    else if ((SystemInformation->mainboard.MECHACONVersion[1] == 6) && ((SystemInformation->mainboard.MECHACONVersion[2] & 0xfe) == 6))
+        description = "L-chassis"; // SCPH-75000, GH-037-xx, GH-040-xx, GH-041-xx, Mechacon 6.6, 6.7
+    else if ((SystemInformation->mainboard.MECHACONVersion[1] == 6) && ((SystemInformation->mainboard.MECHACONVersion[2] & 0xfe) == 10))
+        description = "M-chassis"; // SCPH-77000, GH-051-xx, GH-052-xx, Mechacon 6.10, 6.11
+    else if ((SystemInformation->mainboard.MECHACONVersion[1] == 6) && (SystemInformation->mainboard.ModelID >= 0x20d466) && (SystemInformation->mainboard.ModelID <= 0x20d475))
+        description = "N-chassis"; // SCPH-79000, GH-061-xx, GH-062-xx
+    else if ((SystemInformation->mainboard.MECHACONVersion[1] == 6) && strncmp("0230", SystemInformation->romver, 4) && (SystemInformation->mainboard.ModelID > 0x20d475))
+        description = "P-chassis"; // SCPH-90000, TVcombo, GH-070, GH-071, bootrom 0220
+    else if ((SystemInformation->mainboard.MECHACONVersion[1] == 6) && !strncmp("0230", SystemInformation->romver, 4) && (SystemInformation->mainboard.ModelID > 0x20d475))
+        description = "R-chassis"; // SCPH-90000, GH-072, bootrom 0230
+    else if ((SystemInformation->mainboard.MECHACONVersion[1] == 5) && ((SystemInformation->mainboard.MECHACONVersion[2] & 0xfe) == 10) && ((SystemInformation->mainboard.MECHACONVersion[2] & 0xfe) == 14))
+        description = "X-chassis"; // PSX, XPD-001, XPD-005
     else
         description = "Unknown";
 
