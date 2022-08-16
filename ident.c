@@ -77,7 +77,7 @@ int GetEEInformation(struct SystemInformation *SystemInformation)
 static u16 CalculateCRCOfROM(void *buffer1, void *buffer2, void *start, unsigned int length)
 {
     u16 crc;
-    unsigned int i, size, prevSize;
+    unsigned int i, size = 0, prevSize;
     void *pDestBuffer, *pSrcBuffer;
 
     for (i = 0, prevSize = size, crc = CRC16_INITIAL_CHECKSUM, pDestBuffer = buffer1, pSrcBuffer = start; i < length; i += size, pSrcBuffer += size)
@@ -576,7 +576,7 @@ const char *GetSPU2ChipDesc(unsigned short int revision)
     return description;
 }
 
-const char *GetMECHACONChipDesc(unsigned short int revision)
+/* const char *GetMECHACONChipDesc(unsigned short int revision)
 {
     const char *description;
 
@@ -586,7 +586,7 @@ const char *GetMECHACONChipDesc(unsigned short int revision)
     }
 
     return description;
-}
+} */
 
 const char *GetSystemTypeDesc(unsigned char type)
 {
@@ -739,6 +739,206 @@ const char *GetDSPDesc(unsigned char revision)
     return revisions[revision];
 }
 
+const char *GetMechaDesc(unsigned int vendor)
+{
+    const char *description;
+
+    if (vendor >= 0x050000)
+        vendor = vendor & 0xfffeff; // Retail and debug chips are identical
+    if (vendor != 0x050607)
+        vendor = vendor & 0xffff00; // Mexico unit is unique
+
+    switch (vendor)
+    {
+        case 0x010200:
+            description = "CXP101064-605R";
+            break;
+        case 0x010300:
+            description = "CXP101064-602R"; // DTL-T10000 and retail models, Japan region locked
+            break;
+        case 0x010900:
+            description = "CXP102064-751R"; // only DTL-T10000
+            break;
+        case 0x020501:
+        case 0x020502:
+        case 0x020503:
+            description = "CXP102064-702R"; // DTL-H3000x
+            break;
+        case 0x020701:
+        case 0x020702:
+        case 0x020703:
+            description = "CXP102064-703R"; // DTL-H3000x, DTL-H3010x
+            break;
+        case 0x020900:
+        case 0x020901:
+        case 0x020902:
+        case 0x020903:
+        case 0x020904:
+            description = "CXP102064-704R"; // DTL-H3000x, DTL-H3010x
+            break;
+        case 0x020D00:
+        case 0x020D01:
+        case 0x020D02:
+        case 0x020D04:
+        case 0x020D05:
+            description = "CXP102064-705R/-752R"; // DTL-H3000x, DTL-H3010x, DTL-T10000
+            break;
+        // Japanese region only v1-v2
+        case 0x010600:
+            description = "CXP102064-001R (Not confirmed)";
+            break;
+        case 0x010700:
+            description = "CXP102064-003R";
+            break;
+        case 0x010800:
+            description = "CXP102064-002R";
+            break;
+        case 0x020000:
+            description = "CXP102064-004R (Not confirmed)";
+            break;
+        case 0x020200:
+            description = "CXP102064-005R";
+            break;
+        case 0x020800:
+            description = "CXP102064-006R";
+            break;
+        case 0x020C00:
+            description = "CXP102064-007R";
+            break;
+        // US region only
+        case 0x020401:
+            description = "CXP102064-101R";
+            break;
+        case 0x020601:
+            description = "CXP102064-102R";
+            break;
+        case 0x020C01:
+            description = "CXP102064-103R";
+            break;
+        // EU region only
+        case 0x020602:
+            description = "CXP102064-202R";
+            break;
+        case 0x020C02:
+            description = "CXP102064-203R";
+            break;
+        // Australia region only
+        case 0x020603:
+            description = "CXP102064-302R";
+            break;
+        case 0x020C03:
+            description = "CXP102064-303R";
+            break;
+        // US region only
+        case 0x030001:
+            description = "CXP103049-101GG";
+            break;
+        case 0x030201:
+            description = "CXP103049-102GG";
+            break;
+        case 0x030601:
+            description = "CXP103049-103GG";
+            break;
+        // EU region only
+        case 0x030002:
+            description = "CXP103049-201GG";
+            break;
+        case 0x030202:
+            description = "CXP103049-202GG";
+            break;
+        case 0x030602:
+            description = "CXP103049-203GG";
+            break;
+        // Australia region only
+        case 0x030003:
+            description = "CXP103049-301GG";
+            break;
+        case 0x030203:
+            description = "CXP103049-302GG";
+            break;
+        case 0x030603:
+            description = "CXP103049-303GG";
+            break;
+        // Japan region only
+        case 0x030200:
+            description = "CXP103049-001GG";
+            break;
+        case 0x030600:
+            description = "CXP103049-002GG";
+            break;
+        case 0x030800:
+            description = "CXP103049-003GG";
+            break;
+        // Asia region only
+        case 0x030404:
+            description = "CXP103049-401GG";
+            break;
+        case 0x030604:
+            description = "CXP103049-402GG";
+            break;
+        case 0x030804:
+            description = "CXP103049-403GG";
+            break;
+        // Russia region only
+        case 0x030605:
+            description = "CXP103049-501GG";
+            break;
+        // Dragon
+        case 0x050000:
+            description = "CXR706080-101GG";
+            break;
+        case 0x050200:
+            description = "CXR706080-102GG";
+            break;
+        case 0x050400:
+            description = "CXR706080-103GG";
+            break;
+        case 0x050600:
+            description = "CXR706080-104GG";
+            break;
+        case 0x050C00:
+            description = "CXR706080-105GG/CXR706F080-1GG";
+            break;
+        case 0x050607:
+            description = "CXR706080-106GG";
+            break;
+        /* case 0x050800:
+            description = "CXR706080-701GG (Not confirmed)";
+            break; */
+        case 0x050A00:
+            description = "CXR706080-702GG";
+            break;
+        case 0x050E00:
+            description = "CXR706080-703GG";
+            break;
+        case 0x060000:
+            description = "CXR716080-101GG";
+            break;
+        case 0x060200:
+            description = "CXR716080-102GG";
+            break;
+        case 0x060400:
+            description = "CXR716080-103GG";
+            break;
+        case 0x060600:
+            description = "CXR716080-104GG";
+            break;
+        /* case 0x060800:
+            description = "CXR716080-105GG (Not confirmed)";
+            break; */
+        case 0x060A00:
+            description = "CXR716080-106GG";
+            break;
+        case 0x060C00:
+            description = "CXR726080-301GB";
+            break;
+        default:
+            description = "Unknown";
+    }
+
+    return description;
+}
+
 unsigned int CalculateCPUCacheSize(unsigned char value)
 { // 2^(12+value)
     return (1U << (12 + value));
@@ -857,7 +1057,7 @@ int WriteSystemInformation(FILE *stream, const struct SystemInformation *SystemI
                         "    MagicGate region:    0x%02x (%s)\r\n"
                         "    System type:         0x%02x (%s)\r\n"
                         "    DSP revision:        %u (%s)\r\n",
-                SystemInformation->mainboard.MECHACONVersion[1], SystemInformation->mainboard.MECHACONVersion[2], GetMECHACONChipDesc((unsigned int)(SystemInformation->mainboard.MECHACONVersion[1]) << 8 | (unsigned int)(SystemInformation->mainboard.MECHACONVersion[2])),
+                SystemInformation->mainboard.MECHACONVersion[1], SystemInformation->mainboard.MECHACONVersion[2], GetMechaDesc((unsigned int)(SystemInformation->mainboard.MECHACONVersion[1]) << 16 | (unsigned int)(SystemInformation->mainboard.MECHACONVersion[2]) << 8 | SystemInformation->mainboard.MECHACONVersion[0]),
                 SystemInformation->mainboard.MECHACONVersion[0], GetRegionDesc(SystemInformation->mainboard.MECHACONVersion[0]),
                 SystemInformation->mainboard.MECHACONVersion[3], GetSystemTypeDesc(SystemInformation->mainboard.MECHACONVersion[3]),
                 SystemInformation->DSPVersion[1], GetDSPDesc(SystemInformation->DSPVersion[1]));
