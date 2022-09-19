@@ -22,15 +22,15 @@ void SysmanDeinit(void)
     memset(&SYSMAN_rpc_cd, 0, sizeof(SifRpcClientData_t));
 }
 
-/*    Description:    Reads data from the specified region of memory in IOP address space.
+/*  Description:    Reads data from the specified region of memory in IOP address space.
     Arguments:
         const void *MemoryStart    -> The address of the region of memory to read from (Must be aligned!).
-        void *buffer        -> A pointer to the buffer for storing the data read.
-        unsigned int NumBytes    -> The number of bytes of data to read.
-        int mode        -> Whether to not block (1 = asynchronous operation).
+        void *buffer               -> A pointer to the buffer for storing the data read.
+        unsigned int NumBytes      -> The number of bytes of data to read.
+        int mode                   -> Whether to not block (1 = asynchronous operation).
     Returned values:
-        <0    -> An error code, multiplied by -1.
-        0    -> The operation completed successfully.
+        <0                         -> An error code, multiplied by -1.
+         0                         -> The operation completed successfully.
 */
 int SysmanReadMemory(const void *MemoryStart, void *buffer, unsigned int NumBytes, int mode)
 {

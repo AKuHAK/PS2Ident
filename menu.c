@@ -1924,9 +1924,9 @@ static int DumpSystemROM(const char *path, const struct SystemInformation *Syste
     }
 
 #ifndef DSNET_HOST_SUPPORT
-    sprintf(filename, "%s/%s_NVM.bin", path, SystemInformation->mainboard.ModelName);
+    sprintf(filename, "%s/%s.NVM", path, SystemInformation->mainboard.ModelName);
 #else
-    sprintf(filename, "%s%s_NVM.bin", path, SystemInformation->mainboard.ModelName);
+    sprintf(filename, "%s%s.NVM", path, SystemInformation->mainboard.ModelName);
 #endif
     if ((result = DumpMECHACON_EEPROM(filename)) == 0)
     {
@@ -1936,6 +1936,23 @@ static int DumpSystemROM(const char *path, const struct SystemInformation *Syste
     else
         DumpingStatus[DUMP_REGION_EEPROM].status = result;
 
+    // *.mec
+    DEBUG_PRINTF("Dumping Mechacon version 4 bytes...");
+
+#ifndef DSNET_HOST_SUPPORT
+    sprintf(filename, "%s/%s.MEC", path, SystemInformation->mainboard.ModelName);
+#else
+    sprintf(filename, "%s%s.MEC", path, SystemInformation->mainboard.ModelName);
+#endif
+    if ((result = DumpMECHACON_VERSION(filename)) == 0)
+    {
+        DEBUG_PRINTF("done!\n");
+    }
+    else
+    {
+        DEBUG_PRINTF("failed!\n");
+    }
+
     RedrawDumpingScreen(SystemInformation, DumpingStatus);
 
     if (SystemInformation->mainboard.BOOT_ROM.IsExists && DumpLargeRoms)
@@ -1943,9 +1960,9 @@ static int DumpSystemROM(const char *path, const struct SystemInformation *Syste
         DEBUG_PRINTF("Dumping Boot ROM at %p, %u bytes...", SystemInformation->mainboard.BOOT_ROM.StartAddress, SystemInformation->mainboard.BOOT_ROM.size);
 
 #ifndef DSNET_HOST_SUPPORT
-        sprintf(filename, "%s/%s_BOOT_ROM.bin", path, SystemInformation->mainboard.ModelName);
+        sprintf(filename, "%s/%s.BIN", path, SystemInformation->mainboard.ModelName);
 #else
-        sprintf(filename, "%s%s_BOOT_ROM.bin", path, SystemInformation->mainboard.ModelName);
+        sprintf(filename, "%s%s.BIN", path, SystemInformation->mainboard.ModelName);
 #endif
         if ((result = DumpRom(filename, SystemInformation, DumpingStatus, DUMP_REGION_BOOT_ROM)) == 0)
         {
@@ -1962,9 +1979,9 @@ static int DumpSystemROM(const char *path, const struct SystemInformation *Syste
         DEBUG_PRINTF("Dumping DVD ROM at %p, %u bytes...", SystemInformation->mainboard.DVD_ROM.StartAddress, SystemInformation->mainboard.DVD_ROM.size);
 
 #ifndef DSNET_HOST_SUPPORT
-        sprintf(filename, "%s/%s_DVD_ROM.bin", path, SystemInformation->mainboard.ModelName);
+        sprintf(filename, "%s/%s.ROM1", path, SystemInformation->mainboard.ModelName);
 #else
-        sprintf(filename, "%s%s_DVD_ROM.bin", path, SystemInformation->mainboard.ModelName);
+        sprintf(filename, "%s%s.ROM1", path, SystemInformation->mainboard.ModelName);
 #endif
         if ((result = DumpRom(filename, SystemInformation, DumpingStatus, DUMP_REGION_DVD_ROM)) == 0)
         {

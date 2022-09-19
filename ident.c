@@ -120,6 +120,348 @@ int CheckROM(const struct PS2IDBMainboardEntry *entry)
     return 0;
 }
 
+/* const char *getBOOTROMnameFromcrc(unsigned int crc, const struct PS2IDBMainboardEntry *SystemInformation)
+{
+    const char *description;
+
+    if (!strcmp(SystemInformation->romver, "0100JC20000117"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0x6ba5)
+            description = "0100JC20000117";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0101JC20000217"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0x0d4d)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0101JD20000217"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0xfec5)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0101XD20000224"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0x5144)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0110AC20000727"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0x09bc)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0110AD20000727"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0x8688)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0120AC20000902"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0x9a13)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0120EC20000902"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0xefb8)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0120ED20000902"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0x77b2)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0120JC20001027"))
+    {
+        if ((SystemInformation->BOOT_ROM.crc16 == 0x1c53) || (SystemInformation->BOOT_ROM.crc16 == 0xfc64))
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0150AC20001228"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0xf59a)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0150AD20001228"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0xf019)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0150EC20001228"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0xeb2f)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0150ED20001228"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0x176e)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0150JC20010118"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0xda08)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0150JD20010118"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0x5079)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0160AC20010427"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0x162f)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0160JC20010427"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0x44b3)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0160AC20010704"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0xaa4c)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0160EC20010704"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0xf387)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0160HC20010730"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0x571d)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0160AC20011004"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0xb0e9)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0160EC20011004"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0x5e19)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0160AC20020207"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0x9678)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0160EC20020319"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0xa9f7)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0160EC20020426"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0xe7c4)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0160HC20020426"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0x95d7)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0160JC20020426"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0x77b5)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0170JC20030206"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0xaba4)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0180CD20030224"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0x2896)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0170EC20030227"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0x6d46)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0170ED20030227"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0xa9bb)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0170AC20030325"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0x6f26)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0170AD20030325"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0x854d)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0190AC20030623"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0xc1f4)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0190CC20030623"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0x89ad)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0190EC20030623"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0xf22a)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0190HC20030623"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0x2829)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0190EC20030822"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0x7aaf)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0190JC20030822"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0xfa1e)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0180JC20031028"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0xc986)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0200AC20040614"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0x5fc6)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0200EC20040614"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0xd257)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0200HC20040614"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0x2dc3)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0200JC20040614"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0x2150)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if (!strcmp(SystemInformation->romver, "0210JC20040917"))
+    {
+        if (SystemInformation->BOOT_ROM.crc16 == 0x7631)
+            description = "Correct";
+        else
+            description = "Modchip";
+    }
+    else if ((!strncmp(SystemInformation->romver, "022", 3) ||
+              !strncmp(SystemInformation->romver, "023", 3) ||
+              !strncmp(SystemInformation->romver, "025", 3)) &&
+             (SystemInformation->romver[5] == 'C'))
+    {
+        description = "Deckard Retail";
+    }
+    // TODO: add dumped Deckard Debug detection (0220?D20060905)
+    else
+    {
+        description = "Missing";
+    }
+
+    return description;
+} */
+
 int GetPeripheralInformation(struct SystemInformation *SystemInformation)
 {
     t_SysmanHardwareInfo hwinfo;
@@ -374,6 +716,26 @@ int DumpMECHACON_EEPROM(const char *filename)
     return result;
 }
 
+int DumpMECHACON_VERSION(const char *filename)
+{
+    FILE *file;
+    int result = 0;
+
+    if ((file = fopen(filename, "wb")) != NULL)
+    {
+
+        if (fwrite(SystemInformation->mainboard.MECHACONVersion, 1, 4, file) != 4)
+        {
+            result = EIO;
+        }
+        fclose(file);
+    }
+    else
+        result = -ENOENT;
+
+    return result;
+}
+
 int WriteNewMainboardDBRecord(const char *path, const struct PS2IDBMainboardEntry *SystemInformation)
 {
     FILE *file;
@@ -617,10 +979,18 @@ const char *GetMainboardModelDesc(const struct PS2IDBMainboardEntry *SystemInfor
     const char *description;
     const struct PS2IDBMainboardEntry *ModelData;
 
-    if ((ModelData = PS2IDBMS_LookupMainboardModel(SystemInformation)) != NULL)
+    if (!strncmp(SystemInformation->romver, "0170", 4))
+        description = "GH-023";
+    else if (!strncmp(SystemInformation->romver, "0190", 4) && (SystemInformation->mainboard.MECHACONVersion[2] < 10)) // mechacon < 5.12 - I-chassis
+        description = "GH-026";
+    else if (!strncmp(SystemInformation->romver, "0190", 4) && SystemInformation->mainboard.MECHACONVersion[2] == 0xc) // 5.12 - J-Chassis, other with 190 bootrom - I-Chassis
+        description = "GH-029";
+    else if ((ModelData = PS2IDBMS_LookupMainboardModel(SystemInformation)) != NULL)
         description = ModelData->MainboardName;
-    else if (!strncmp(SystemInformation->romver, "0170", 4) || !strncmp(SystemInformation->romver, "0190", 4))
-        description = "Sticker"; // SCPH-5xxxx can be retrieved from sticker
+    else if (!strncmp(SystemInformation->romver, "0200", 4) && (SystemInformation->mainboard.ee.revision == 3))
+        description = "GH-032-xx (Missing)"; // EE and GS separate
+    else if (!strncmp(SystemInformation->romver, "0200", 4) && (SystemInformation->mainboard.ee.revision == 4))
+        description = "GH-035-xx (Missing)"; // EE and GS combined
     else
         description = "Missing";
 
@@ -644,17 +1014,21 @@ const char *GetChassisDesc(const struct PS2IDBMainboardEntry *SystemInformation)
 {
     const char *description;
 
-    if (!strcmp(SystemInformation->MainboardName, "GH-001") || !strcmp(SystemInformation->MainboardName, "GH-003"))
+    if (!strncmp(SystemInformation->MainboardName, "GH-001", 6) || !strncmp(SystemInformation->MainboardName, "GH-003", 6))
         description = "A-chassis"; // SCPH-10000 and SCPH-15000
-    else if (!strcmp(SystemInformation->MainboardName, "GH-003") && strncmp("0101", SystemInformation->romver, 4))
+    else if (!strncmp(SystemInformation->MainboardName, "GH-003", 6) && strncmp("0101", SystemInformation->romver, 4))
         description = "A-chassis+"; // SCPH-18000 with GH-003
-    else if (!strcmp(SystemInformation->MainboardName, "GH-004") || !strcmp(SystemInformation->MainboardName, "GH-005"))
+    else if (!strncmp(SystemInformation->MainboardName, "GH-004", 6) || !strncmp(SystemInformation->MainboardName, "GH-005", 6))
         description = "B-chassis"; // SCPH-30000
-    else if (!strcmp(SystemInformation->MainboardName, "GH-006") || !strcmp(SystemInformation->MainboardName, "GH-007"))
+    else if (!strncmp(SystemInformation->MainboardName, "GH-006", 6) || !strncmp(SystemInformation->MainboardName, "GH-007", 6))
         description = "C-chassis"; // SCPH-30000
-    else if (!strcmp(SystemInformation->MainboardName, "GH-010") || !strcmp(SystemInformation->MainboardName, "GH-011") || !strcmp(SystemInformation->MainboardName, "GH-012") || !strcmp(SystemInformation->MainboardName, "GH-013") || !strcmp(SystemInformation->MainboardName, "GH-014"))
+    else if (!strncmp(SystemInformation->MainboardName, "GH-010", 6) ||
+             !strncmp(SystemInformation->MainboardName, "GH-011", 6) ||
+             !strncmp(SystemInformation->MainboardName, "GH-012", 6) ||
+             !strncmp(SystemInformation->MainboardName, "GH-013", 6) ||
+             !strncmp(SystemInformation->MainboardName, "GH-014", 6))
         description = "D-chassis"; // SCPH-30000, SCPH-30000R and SCPH-35000
-    else if (!strcmp(SystemInformation->MainboardName, "GH-016"))
+    else if (!strncmp(SystemInformation->MainboardName, "GH-016", 6))
         description = "DF-chassis"; // SCPH-30000, GH-016
     else if ((SystemInformation->mainboard.ADD010 & 0xfffe) == 0x0800)
         description = "AB-chassis"; // SCPH-18000, GH-008, ADD0x10 0x0801
