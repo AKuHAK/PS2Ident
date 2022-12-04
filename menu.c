@@ -37,7 +37,7 @@ extern unsigned short int SelectButton, CancelButton;
 static int DumpSystemROM(const char *path, const struct SystemInformation *SystemInformation);
 static int DumpLargeRoms = 1;
 
-#define MAIN_MENU_BTN_DUMP 0xFF // Special button!
+#define MAIN_MENU_BTN_DUMP 0xFF //Special button!
 
 enum SUMMARY_ID
 {
@@ -231,10 +231,8 @@ enum EXTBUS_ID
 };
 
 static struct UIMenuItem SummaryMenuItems[] = {
-    // Mainboard, model and various params
-    {MITEM_LABEL, 0, 0, 0, 0, 0, 0, SYS_UI_LBL_SYS_INFO},
-    {MITEM_BREAK},
-    {MITEM_BREAK},
+//Mainboard, model and various params
+    {MITEM_LABEL, 0, 0, 0, 0, 0, 0, SYS_UI_LBL_SYS_INFO}, {MITEM_BREAK}, {MITEM_BREAK},
 
     {MITEM_LABEL, 0, 0, 0, 0, 0, 0, SYS_UI_LBL_SUMMARY},
     {MITEM_TAB},
@@ -330,7 +328,7 @@ static struct UIMenuItem SummaryMenuItems[] = {
     {MITEM_BREAK},
 
     {MITEM_LABEL, 0, 0, 0, 0, 0, 0, SYS_UI_LBL_IOP},
-    //    {MITEM_SPACE},
+//    {MITEM_SPACE},
     {MITEM_LABEL, 0, 0, 0, 0, 0, 0, SYS_UI_LBL_REVISION},
     {MITEM_TAB},
     {MITEM_TAB},
@@ -345,10 +343,8 @@ static struct UIMenuItem SummaryMenuItems[] = {
     {MITEM_TERMINATOR}};
 
 static struct UIMenuItem BoardMenuItems[] = {
-    // Mainboard, model and various params
-    {MITEM_LABEL, 0, 0, 0, 0, 0, 0, SYS_UI_LBL_SYS_INFO},
-    {MITEM_BREAK},
-    {MITEM_BREAK},
+//Mainboard, model and various params
+    {MITEM_LABEL, 0, 0, 0, 0, 0, 0, SYS_UI_LBL_SYS_INFO}, {MITEM_BREAK}, {MITEM_BREAK},
 
     {MITEM_LABEL, 0, 0, 0, 0, 0, 0, SYS_UI_LBL_MAINBOARD},
     {MITEM_TAB},
@@ -478,7 +474,7 @@ static struct UIMenuItem Board2MenuItems[] = {
     {MITEM_SEPARATOR},
     {MITEM_BREAK},
 
-    // IDs
+    //IDs
     {MITEM_LABEL, 0, 0, 0, 0, 0, 0, SYS_UI_LBL_SERIAL_NUMBER},
     {MITEM_TAB},
     {MITEM_TAB},
@@ -617,7 +613,7 @@ static struct UIMenuItem ROMMenuItems[] = {
     {MITEM_LABEL, ROM_ID_ROM_UNCLEAN, 0, 0, 0, 0, 0, SYS_UI_LBL_ROM_UNCLEAN},
     {MITEM_BREAK},
 
-    // Version information
+    //Version information
     {MITEM_BREAK},
 
     {MITEM_LABEL, 0, 0, 0, 0, 0, 0, SYS_UI_LBL_ROMVER},
@@ -649,7 +645,7 @@ static struct UIMenuItem ROMMenuItems[] = {
 static struct UIMenuItem EEGSMenuItems[] = {
     {MITEM_LABEL, 0, 0, 0, 0, 0, 0, SYS_UI_LBL_SYS_INFO}, {MITEM_BREAK}, {MITEM_BREAK},
 
-    // EE
+    //EE
     {MITEM_LABEL, 0, 0, 0, 0, 0, 0, SYS_UI_LBL_EE},
     {MITEM_TAB},
     {MITEM_TAB},
@@ -710,7 +706,7 @@ static struct UIMenuItem EEGSMenuItems[] = {
 
     {MITEM_BREAK},
 
-    // GS
+    //GS
     {MITEM_LABEL, 0, 0, 0, 0, 0, 0, SYS_UI_LBL_GS},
     {MITEM_SEPARATOR},
     {MITEM_LABEL, 0, 0, 0, 0, 0, 0, SYS_UI_LBL_REVISION},
@@ -735,7 +731,7 @@ static struct UIMenuItem EEGSMenuItems[] = {
 static struct UIMenuItem IOPSPU2MenuItems[] = {
     {MITEM_LABEL, 0, 0, 0, 0, 0, 0, SYS_UI_LBL_SYS_INFO}, {MITEM_BREAK}, {MITEM_BREAK},
 
-    // IOP
+    //IOP
     {MITEM_LABEL, 0, 0, 0, 0, 0, 0, SYS_UI_LBL_IOP},
     {MITEM_TAB},
     {MITEM_TAB},
@@ -767,7 +763,7 @@ static struct UIMenuItem IOPSPU2MenuItems[] = {
     {MITEM_LABEL, 0, 0, 0, 0, 0, 0, SYS_UI_LBL_SPU2},
     {MITEM_SEPARATOR},
 
-    // SPU
+    //SPU
     {MITEM_LABEL, 0, 0, 0, 0, 0, 0, SYS_UI_LBL_REVISION},
     {MITEM_TAB},
     {MITEM_TAB},
@@ -911,7 +907,7 @@ static struct UIMenuItem ExtBusMenuItems[] = {
     {MITEM_BREAK},
     {MITEM_TERMINATOR}};
 
-// Forward declarations
+//Forward declarations
 static struct UIMenu SummaryMenu;
 static struct UIMenu BoardReportMenu;
 static struct UIMenu Board2ReportMenu;
@@ -931,12 +927,12 @@ static struct UIMenu DEV9ReportMenu    = {&IOPSPU2ReportMenu, &ExtBusReportMenu,
 static struct UIMenu ExtBusReportMenu  = {&DEV9ReportMenu, NULL, ExtBusMenuItems, {{BUTTON_TYPE_START, SYS_UI_LBL_DUMP}, {BUTTON_TYPE_SYS_CANCEL, SYS_UI_LBL_QUIT}}};
 
 /*
-    In this whole file, some variables and values used would be:
+	In this whole file, some variables and values used would be:
 
-    SelectedMenu ->	0 = The game list.
-            1 = The control panel.
+	SelectedMenu ->	0 = The game list.
+			1 = The control panel.
 
-    SelectedMenuOption -> The element in the menu that is currently selected.
+	SelectedMenuOption -> The element in the menu that is currently selected.
 */
 
 #ifndef DSNET_HOST_SUPPORT
@@ -957,6 +953,7 @@ struct SupportedDevice
 static int GetUserSaveDeviceSelection(char *SelectedDevice, const struct RequiredFileSpaceStat *RequiredSpaceStats, unsigned int NumFiles)
 {
     unsigned char done, NumDevicesAvailable, SelectedDeviceIndex, DeviceID;
+    unsigned int PadStatus;
     int result, i, devicesInRow, deviceRow;
     GS_RGBAQ FontColour;
     static struct SupportedDevice devices[NUM_SUPPORTED_DEVICES] = {
@@ -1012,7 +1009,7 @@ static int GetUserSaveDeviceSelection(char *SelectedDevice, const struct Require
 #endif
     };
 
-    // Allow the user to browse for icon sets on mc0:, mc1: and mass:.
+    //Allow the user to browse for icon sets on mc0:, mc1: and mass:.
 
     for (i = 0; i < NUM_SUPPORTED_DEVICES; i++)
     {
@@ -1027,7 +1024,6 @@ static int GetUserSaveDeviceSelection(char *SelectedDevice, const struct Require
     result              = 0;
     while (!done)
     {
-        unsigned int PadStatus;
         DrawBackground(&UIDrawGlobal, &BackgroundTexture);
 
         for (i = 0, NumDevicesAvailable = 0; i < NUM_SUPPORTED_DEVICES; i++)
@@ -1077,7 +1073,7 @@ static int GetUserSaveDeviceSelection(char *SelectedDevice, const struct Require
                     SelectedDeviceIndex += MAX_DEVICES_IN_ROW;
             }
 
-            // Display a list of available devices and allow the user to choose a device to browse for icons from.
+            //Display a list of available devices and allow the user to choose a device to browse for icons from.
             for (i = 0, DeviceID = 0, devicesInRow = 0, deviceRow = 0; i < NumDevicesAvailable; DeviceID++)
             {
                 if (devices[DeviceID].IsReady)
@@ -1117,8 +1113,8 @@ static int GetUserSaveDeviceSelection(char *SelectedDevice, const struct Require
                 if ((result = GetHasDeviceSufficientSpace(devices[SelectedDeviceIndex].name, devices[SelectedDeviceIndex].unit, RequiredSpaceStats, NumFiles)) == 1)
                 {
                     sprintf(SelectedDevice, "%s%u:", devices[SelectedDeviceIndex].name, devices[SelectedDeviceIndex].unit);
-                    result        = 0;
-                    done          = 1;
+                    result = 0;
+                    done   = 1;
                     DumpLargeRoms = 1;
                 }
                 else if (result == 0)
@@ -1166,22 +1162,24 @@ static int DumpSystemROMScreen(const struct SystemInformation *SystemInformation
 {
     char DumpPath[96];
     struct RequiredFileSpaceStat RequiredSpace[7];
-    int result              = 0;
-    unsigned int NumFiles   = 3;
+    int i, result;
+    unsigned int NumFiles;
 
-    // Start with the root folder.
+    NumFiles                = 3;
+
+    //Start with the root folder.
     RequiredSpace[0].IsFile = 0;
     RequiredSpace[0].length = 0;
 
-    // NVRAM dump
+    //NVRAM dump
     RequiredSpace[1].IsFile = 1;
     RequiredSpace[1].length = 1024;
 
-    // Log files + database
+    //Log files + database
     RequiredSpace[2].IsFile = 1;
-    RequiredSpace[2].length = 2048; // Shouldn't get larger than this.
+    RequiredSpace[2].length = 2048; //Shouldn't get larger than this.
 
-    // Boot ROM
+    //Boot ROM
     if (SystemInformation->mainboard.BOOT_ROM.IsExists)
     {
         RequiredSpace[NumFiles].IsFile = 1;
@@ -1189,7 +1187,7 @@ static int DumpSystemROMScreen(const struct SystemInformation *SystemInformation
         NumFiles++;
     }
 
-    // DVD ROM
+    //DVD ROM
     if (SystemInformation->mainboard.DVD_ROM.IsExists)
     {
         RequiredSpace[NumFiles].IsFile = 1;
@@ -1197,7 +1195,7 @@ static int DumpSystemROMScreen(const struct SystemInformation *SystemInformation
         NumFiles++;
     }
 
-    if ((result = GetUserSaveDeviceSelection(DumpPath, RequiredSpace, NumFiles)) == 0)
+    if ((GetUserSaveDeviceSelection(DumpPath, RequiredSpace, NumFiles)) == 0)
     {
 #ifndef DSNET_HOST_SUPPORT
         if (!(SystemInformation->mainboard.status & PS2IDB_STAT_ERR_CONSOLEID))
@@ -1217,20 +1215,20 @@ static int DumpSystemROMScreen(const struct SystemInformation *SystemInformation
         DEBUG_PRINTF("Cleaning up %s\n", DumpPath);
         RemoveFolder(DumpPath);
         DEBUG_PRINTF("Creating %s\n", DumpPath);
-        if ((result = mkdir(DumpPath)) >= 0 || result == -EEXIST)
+        if ((result = mkdir(DumpPath) >= 0) || result == -EEXIST)
         {
-            result = DumpSystemROM(DumpPath, SystemInformation);
+            DumpSystemROM(DumpPath, SystemInformation);
         }
         else
         {
             DisplayErrorMessage(SYS_UI_MSG_DEV_ACC_ERR);
         }
 #else
-        result = DumpSystemROM(DumpPath, SystemInformation);
+        DumpSystemROM(DumpPath, SystemInformation);
 #endif
     }
 
-    return result;
+    return 0;
 }
 
 static void LoadBoardInformation(const struct SystemInformation *SystemInformation)
@@ -1472,7 +1470,7 @@ static void LoadROMInformation(const struct SystemInformation *SystemInformation
         UISetVisible(&ROMReportMenu, ROM_ID_ROM_UNCLEAN, 0);
     }
 
-    // ROM region and chip information
+    //ROM region and chip information
     if (SystemInformation->ROMs[0].IsExists)
     {
         UISetValue(&ROMReportMenu, ROM_ID_ROM0_ADDR, SystemInformation->ROMs[0].StartAddress);
@@ -1563,7 +1561,7 @@ static void LoadROMInformation(const struct SystemInformation *SystemInformation
         UISetVisible(&ROMReportMenu, ROM_ID_DVD_ROM_MBIT_LBL, 0);
     }
 
-    // Version information
+    //Version information
     UISetString(&ROMReportMenu, ROM_ID_ROMVER, SystemInformation->mainboard.romver);
     UISetString(&SummaryMenu, SUM_ROM_ID_ROMVER, SystemInformation->mainboard.romver);
     UISetValue(&ROMReportMenu, ROM_ID_ROMGEN_MMDD, SystemInformation->mainboard.ROMGEN_MonthDate);
@@ -1585,7 +1583,7 @@ static void LoadROMInformation(const struct SystemInformation *SystemInformation
 
 static void LoadEEGSInformation(const struct SystemInformation *SystemInformation)
 {
-    // EE
+    //EE
     UISetValue(&EEGSReportMenu, EEGS_ID_EE_IMPL, SystemInformation->mainboard.ee.implementation);
     UISetValue(&EEGSReportMenu, EEGS_ID_EE_REV_MAJOR, SystemInformation->mainboard.ee.revision >> 4);
     UISetValue(&EEGSReportMenu, EEGS_ID_EE_REV_MINOR, SystemInformation->mainboard.ee.revision & 0xF);
@@ -1601,7 +1599,7 @@ static void LoadEEGSInformation(const struct SystemInformation *SystemInformatio
     UISetValue(&EEGSReportMenu, EEGS_ID_EE_DCACHE_SIZE, CalculateCPUCacheSize(SystemInformation->mainboard.ee.DCacheSize) / 1024);
     UISetValue(&EEGSReportMenu, EEGS_ID_EE_RAM_SIZE, SystemInformation->mainboard.ee.RAMSize);
 
-    // GS
+    //GS
     UISetValue(&EEGSReportMenu, EEGS_ID_GS_REV_MAJOR, SystemInformation->mainboard.gs.revision >> 4);
     UISetValue(&EEGSReportMenu, EEGS_ID_GS_REV_MINOR, SystemInformation->mainboard.gs.revision & 0xF);
     UISetString(&EEGSReportMenu, EEGS_ID_GS_NAME, GetGSChipDesc((u16)(SystemInformation->mainboard.gs.id) << 8 | SystemInformation->mainboard.gs.revision));
@@ -1614,7 +1612,7 @@ static void LoadEEGSInformation(const struct SystemInformation *SystemInformatio
 
 static void LoadIOPSPU2Information(const struct SystemInformation *SystemInformation)
 {
-    // IOP
+    //IOP
     UISetValue(&IOPSPU2ReportMenu, IOPSPU2_ID_IOP_REV_MAJOR, SystemInformation->mainboard.iop.revision >> 4);
     UISetValue(&IOPSPU2ReportMenu, IOPSPU2_ID_IOP_REV_MINOR, SystemInformation->mainboard.iop.revision & 0xF);
     UISetString(&IOPSPU2ReportMenu, IOPSPU2_ID_IOP_NAME, GetIOPChipDesc(SystemInformation->mainboard.iop.revision));
@@ -1624,7 +1622,7 @@ static void LoadIOPSPU2Information(const struct SystemInformation *SystemInforma
 
     UISetValue(&IOPSPU2ReportMenu, IOPSPU2_ID_IOP_RAM_SIZE, SystemInformation->mainboard.iop.RAMSize);
 
-    // SPU2
+    //SPU2
     UISetValue(&IOPSPU2ReportMenu, IOPSPU2_ID_SPU2_REV, SystemInformation->mainboard.spu2.revision);
     UISetString(&IOPSPU2ReportMenu, IOPSPU2_ID_SPU2_NAME, GetSPU2ChipDesc(SystemInformation->mainboard.spu2.revision));
 }
@@ -1741,7 +1739,7 @@ int MainMenu(const struct SystemInformation *SystemInformation)
             case MAIN_MENU_BTN_DUMP:
                 DumpSystemROMScreen(SystemInformation);
                 break;
-            case 1: // User quit
+            case 1: //User quit
                 if (DisplayPromptMessage(SYS_UI_MSG_QUIT, SYS_UI_LBL_CANCEL, SYS_UI_LBL_OK) == 2)
                     done = 1;
                 break;
@@ -1766,6 +1764,7 @@ struct DumpRegion
 void RedrawDumpingScreen(const struct SystemInformation *SystemInformation, const struct DumpingStatus *DumpingStatus)
 {
     unsigned int i;
+    short int endX;
     char TextBuffer[32];
     GS_RGBAQ colour;
     static struct DumpRegion DumpRegions[DUMP_REGION_COUNT] = {
@@ -1826,12 +1825,10 @@ void RedrawDumpingScreen(const struct SystemInformation *SystemInformation, cons
 
     for (i = 0; i < DUMP_REGION_COUNT; i++)
     {
-        short int endX;
         FontPrintf(&UIDrawGlobal, DumpRegions[i].NameLabelX, DumpRegions[i].NameLabelY, 2, 1.0f, GS_WHITE_FONT, DumpRegions[i].label);
 
         endX   = DumpRegions[i].ProgressBarX + PROGRESS_BAR_LENGTH * DumpingStatus[i].progress;
-        colour = DumpingStatus[i].status < 0 ? GS_RED : (DumpingStatus[i].status == 0) ? GS_LGREY :
-                                                                                         GS_GREEN;
+        colour = DumpingStatus[i].status < 0 ? GS_RED : (DumpingStatus[i].status == 0) ? GS_LGREY : GS_GREEN;
         DrawSprite(&UIDrawGlobal, DumpRegions[i].ProgressBarX, DumpRegions[i].ProgressBarY, endX, DumpRegions[i].ProgressBarY + PROGRESS_BAR_HEIGHT, 3, colour);
 
         if (DumpRegions[i].IsInstalled)
@@ -1870,7 +1867,7 @@ void RedrawLoadingScreen(unsigned int frame)
     }
 
     if (frame < 60)
-    { // Fade in
+    { //Fade in
         rgbaq.r = 0;
         rgbaq.g = 0;
         rgbaq.b = 0;
@@ -1885,9 +1882,8 @@ void RedrawLoadingScreen(unsigned int frame)
 static int DumpSystemROM(const char *path, const struct SystemInformation *SystemInformation)
 {
     char *filename;
-    unsigned int PathLength, ModelNameLen;
-    // unsigned int ROMVerLen;
-    int result;
+    unsigned int PathLength, ModelNameLen, ROMVerLen;
+    int result, PadStatus;
     FILE *logfile;
     struct DumpingStatus DumpingStatus[DUMP_REGION_COUNT];
     unsigned char done;
@@ -1897,7 +1893,7 @@ static int DumpSystemROM(const char *path, const struct SystemInformation *Syste
     // Calculate the lengths of various parts of the filenames used below.
     PathLength   = strlen(path);
     ModelNameLen = strlen(SystemInformation->mainboard.ModelName);
-    // ROMVerLen    = strlen(SystemInformation->mainboard.romver);
+    ROMVerLen    = strlen(SystemInformation->mainboard.romver);
 
     filename     = malloc(PathLength + ModelNameLen + 32);
 
@@ -1912,7 +1908,7 @@ static int DumpSystemROM(const char *path, const struct SystemInformation *Syste
         fclose(logfile);
     }
 
-    // If the mainboard model is not recognized, write a new database record file to the disk.
+    //If the mainboard model is not recognized, write a new database record file to the disk.
     if (PS2IDBMS_LookupMainboardModel(&SystemInformation->mainboard) == NULL)
     {
 #ifndef DSNET_HOST_SUPPORT
@@ -2004,7 +2000,6 @@ static int DumpSystemROM(const char *path, const struct SystemInformation *Syste
     done = 0;
     while (!done)
     {
-        int PadStatus;
         RedrawDumpingScreen(SystemInformation, DumpingStatus);
         // Draw the legend.
         DrawButtonLegend(&UIDrawGlobal, &PadLayoutTexture, CancelButton == PAD_CROSS ? BUTTON_TYPE_CROSS : BUTTON_TYPE_CIRCLE, 50, 404, 1);

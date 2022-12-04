@@ -27,7 +27,7 @@ Get from the DECR field (20:16) of the timing registers of the SSBUSC:
 	DVD ROM (DEV1)
 	Boot ROM (DEV2)
 
-	On the DTL-T10000, DEV1 exists but does not contain a DVD Player.
+	On the DTL-T10000, DEV1 exists, but does not contain a DVD Player.
 	Instead, it contains information on the installed hardware, at memory address 0x1FBF0000.
 
 	DEV1 was possibly originally located at 0x1FA00000 (after DEV2), as that is the power-on address for DEV1.

@@ -76,20 +76,19 @@ const char *GetSPEEDDesc(unsigned short int revision)
 const char *GetSPEEDCapsDesc(unsigned short int caps)
 {
     static char capsbuffer[64];
+    unsigned int i;
+    unsigned char capability, NumCapabilities;
+    static const char *capabilities[] = {
+        "SMAP",
+        "ATA",
+        "Unknown",
+        "UART",
+        "DVR",
+        "Flash",
+        "Unknown"};
 
     if (caps != 0)
     {
-        unsigned int i;
-        unsigned char capability, NumCapabilities;
-        static const char *capabilities[] = {
-            "SMAP",
-            "ATA",
-            "Unknown",
-            "UART",
-            "DVR",
-            "Flash",
-            "Unknown"};
-
         capsbuffer[0] = '\0';
         for (i = 0, NumCapabilities = 0; i < 8; i++)
         {
@@ -235,43 +234,43 @@ const char *GetChassisDesc(const struct PS2IDBMainboardEntry *SystemInformation)
     const char *description;
 
     if (!strcmp(SystemInformation->MainboardName, "GH-001") || !strcmp(SystemInformation->MainboardName, "GH-003"))
-        description = "A-chassis"; // SCPH-10000 and SCPH-15000
+        description = "A-chassis"; //SCPH-10000 and SCPH-15000
     else if (!strcmp(SystemInformation->MainboardName, "GH-003") && strncmp("0101", SystemInformation->romver, 4))
-        description = "A-chassis+"; // SCPH-18000 with GH-003
+        description = "A-chassis+"; //SCPH-18000 with GH-003
     else if (!strcmp(SystemInformation->MainboardName, "GH-008"))
-        description = "AB-chassis"; // SCPH-18000
+        description = "AB-chassis"; //SCPH-18000
     else if (!strcmp(SystemInformation->MainboardName, "GH-004") || !strcmp(SystemInformation->MainboardName, "GH-005"))
-        description = "B-chassis"; // SCPH-30000
+        description = "B-chassis"; //SCPH-30000
     else if (!strcmp(SystemInformation->MainboardName, "GH-006") || !strcmp(SystemInformation->MainboardName, "GH-007"))
-        description = "C-chassis"; // SCPH-30000
+        description = "C-chassis"; //SCPH-30000
     else if (!strcmp(SystemInformation->MainboardName, "GH-010") || !strcmp(SystemInformation->MainboardName, "GH-011") || !strcmp(SystemInformation->MainboardName, "GH-012") || !strcmp(SystemInformation->MainboardName, "GH-013") || !strcmp(SystemInformation->MainboardName, "GH-014"))
-        description = "D-chassis"; // SCPH-30000, SCPH-30000R and SCPH-35000
+        description = "D-chassis"; //SCPH-30000, SCPH-30000R and SCPH-35000
     else if (!strcmp(SystemInformation->MainboardName, "GH-015"))
-        description = "F-chassis"; // SCPH-30000 and SCPH-30000R
+        description = "F-chassis"; //SCPH-30000 and SCPH-30000R
     else if (!strcmp(SystemInformation->MainboardName, "GH-016"))
-        description = "DR-chassis"; // SCPH-30000
+        description = "DR-chassis"; //SCPH-30000
     else if (!strcmp(SystemInformation->MainboardName, "GH-017") || !strcmp(SystemInformation->MainboardName, "GH-019") || !strcmp(SystemInformation->MainboardName, "GH-022"))
-        description = "G-chassis"; // SCPH-37000 and SCPH-39000
+        description = "G-chassis"; //SCPH-37000 and SCPH-39000
     else if (!strcmp(SystemInformation->MainboardName, "GH-023"))
-        description = "H-chassis"; // SCPH-50000
+        description = "H-chassis"; //SCPH-50000
     else if (!strcmp(SystemInformation->MainboardName, "GH-026"))
-        description = "I-chassis"; // SCPH-50000a
+        description = "I-chassis"; //SCPH-50000a
     else if (!strcmp(SystemInformation->MainboardName, "GH-029"))
-        description = "J-chassis"; // SCPH-50000b
+        description = "J-chassis"; //SCPH-50000b
     else if (!strncmp(SystemInformation->MainboardName, "GH-032", 6) || !strncmp(SystemInformation->MainboardName, "GH-035", 6))
-        description = "K-chassis"; // SCPH-70000
+        description = "K-chassis"; //SCPH-70000
     else if (!strncmp(SystemInformation->MainboardName, "GH-037", 6) || !strncmp(SystemInformation->MainboardName, "GH-040", 6) || !strncmp(SystemInformation->MainboardName, "GH-041", 6))
-        description = "L-chassis"; // SCPH-75000
+        description = "L-chassis"; //SCPH-75000
     else if (!strncmp(SystemInformation->MainboardName, "GH-051", 6) || !strncmp(SystemInformation->MainboardName, "GH-052", 6))
-        description = "M-chassis"; // SCPH-77000
+        description = "M-chassis"; //SCPH-77000
     else if (!strncmp(SystemInformation->MainboardName, "GH-061", 6) || !strncmp(SystemInformation->MainboardName, "GH-062", 6))
-        description = "N-chassis"; // SCPH-79000
+        description = "N-chassis"; //SCPH-79000
     else if (!strncmp(SystemInformation->MainboardName, "GH-070", 6) || !strncmp(SystemInformation->MainboardName, "GH-071", 6))
-        description = "P-chassis"; // SCPH-90000
+        description = "P-chassis"; //SCPH-90000
     else if (!strncmp(SystemInformation->MainboardName, "GH-072", 6))
-        description = "R-chassis"; // SCPH-90000
+        description = "R-chassis"; //SCPH-90000
     else if (!strncmp(SystemInformation->MainboardName, "XPD-", 4))
-        description = "X-chassis"; // PSX
+        description = "X-chassis"; //PSX
     else
         description = "Unknown";
 

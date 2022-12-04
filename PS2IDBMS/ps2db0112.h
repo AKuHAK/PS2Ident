@@ -12,7 +12,7 @@ struct PS2IDBMainboardEntry112
     t_PS2DBUSBHardwareInfo usb;
     t_PS2DBSPU2HardwareInfo spu2;
 
-    u32 MachineType; // The value returned through the MachineType() syscall.
+    u32 MachineType; //The value returned through the MachineType() syscall.
     u16 ROMGEN_MonthDate;
     u16 ROMGEN_Year;
     u16 MPUBoardID;
@@ -26,7 +26,7 @@ struct PS2IDBMainboardEntry112
     u8 ConModelID[2];
     u8 MRenewalDate[5];
     u8 status;
-    // Known as "ADD0x10" in the SONY service tools, it's word 0x10 of the EEPROM from older consoles and word 0x01 of Dragon units. It's used to identify important revisions.
+    //Known as "ADD0x10" in the SONY service tools, it's word 0x10 of the EEPROM from older consoles and word 0x01 of Dragon units. It's used to identify important revisions.
     u16 ADD010;
     u16 padding;
 };

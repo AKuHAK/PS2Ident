@@ -7,22 +7,21 @@
 
 static unsigned char MECHACON_CMD_S36_supported = 0, MECHACON_CMD_S27_supported = 0;
 
-// Initialize add-on functions. Currently only retrieves the MECHACON's version to determine what sceCdAltGetRegionParams() should do.
+//Initialize add-on functions. Currently only retrieves the MECHACON's version to determine what sceCdAltGetRegionParams() should do.
 int cdInitAdd(void)
 {
-    int status, i;
+    int result, status, i;
     u8 MECHA_version_data[3];
     unsigned int MECHA_version;
 
-    // Like how CDVDMAN checks sceCdMV(), do not continuously attempt to get the MECHACON version because some consoles (e.g. DTL-H301xx) can't return one.
+    //Like how CDVDMAN checks sceCdMV(), do not continuously attempt to get the MECHACON version because some consoles (e.g. DTL-H301xx) can't return one.
     for (i = 0; i <= 100; i++)
     {
-        int result;
         if ((result = sceCdMV(MECHA_version_data, &status)) != 0 && ((status & 0x80) == 0))
         {
             MECHA_version              = MECHA_version_data[2] | ((unsigned int)MECHA_version_data[1] << 8) | ((unsigned int)MECHA_version_data[0] << 16);
-            MECHACON_CMD_S36_supported = (0x5FFFF < MECHA_version); // v6.0 and later
-            MECHACON_CMD_S27_supported = (0x501FF < MECHA_version); // v5.2 and later
+            MECHACON_CMD_S36_supported = (0x5FFFF < MECHA_version); //v6.0 and later
+            MECHACON_CMD_S27_supported = (0x501FF < MECHA_version); //v5.2 and later
             return 0;
         }
     }
@@ -33,8 +32,8 @@ int cdInitAdd(void)
 }
 
 /*
-     This function provides an equivalent of the sceCdGetRegionParams function from the newer CDVDMAN modules. The old CDVDFSV and CDVDMAN modules don't support this S-command.
-    It's supported by only slimline consoles, and returns regional information (e.g. MECHACON version, MG region mask, DVD player region letter etc.).
+	 This function provides an equivalent of the sceCdGetRegionParams function from the newer CDVDMAN modules. The old CDVDFSV and CDVDMAN modules don't support this S-command.
+	It's supported by only slimline consoles, and returns regional information (e.g. MECHACON version, MG region mask, DVD player region letter etc.).
 */
 int sceCdAltReadRegionParams(u8 *data, u32 *stat)
 {
@@ -60,12 +59,12 @@ int sceCdAltReadRegionParams(u8 *data, u32 *stat)
 }
 
 /*
-    This function provides an equivalent of the sceCdMV function from the newer CDVDMAN modules.
-    When EELOADCNF is used (In the case of not resetting the IOP and the previous program used EELOADCNF), the data output won't be right because EELOADCNF causes XCDVDMAN to be used with the old CDVDFSV module.
-    One extra byte will be returned to CDVDFSV when sceCdMV completes. It doesn't seem to cause a crash despite such a condition considered a buffer overflow, but the data returned to the EE will be wrong:
-        The old specs (Followed by CDVDFSV and the EE-side client) mean that only 3 bytes should be returned instead of 4, so the returned data (to the EE-side program) will be offset by 1 and the trailing byte will be truncated.
+	This function provides an equivalent of the sceCdMV function from the newer CDVDMAN modules.
+	When EELOADCNF is used (In the case of not resetting the IOP and the previous program used EELOADCNF), the data output won't be right because EELOADCNF causes XCDVDMAN to be used with the old CDVDFSV module.
+	One extra byte will be returned to CDVDFSV when sceCdMV completes. It doesn't seem to cause a crash despite such a condition considered a buffer overflow, but the data returned to the EE will be wrong:
+		The old specs (Followed by CDVDFSV and the EE-side client) mean that only 3 bytes should be returned instead of 4, so the returned data (to the EE-side program) will be offset by 1 and the trailing byte will be truncated.
 
-    On the SCPH-10000 and SCPH-15000, EELOADCNF doesn't exist and hence this behaviour won't exist.
+	On the SCPH-10000 and SCPH-15000, EELOADCNF doesn't exist and hence this behaviour won't exist.
 */
 int sceCdAltMV(u8 *buffer, u32 *stat)
 {

@@ -2,7 +2,6 @@
 #include "sysman/iLink.h"
 #include "sysman/usb.h"
 #include "sysman/sysman_rpc.h"
-#include "sysman/sysinfo.h"
 
 void SysmanInit(void);
 void SysmanDeinit(void);

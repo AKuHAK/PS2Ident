@@ -1,17 +1,18 @@
-/*    iLink.c
- *    Purpose:    Contains the functions that are used for controlling the i.Link hardware and writing/reading values to/from the PHY.
+/*	iLink.c
+ *	Purpose:	Contains the functions that are used for controlling the i.Link hardware and writing/reading values to/from the PHY.
  *
- *    Last Updated:    2012/09/21
- *    Programmer:    SP193
+ *	Last Updated:	2012/09/21
+ *	Programmer:	SP193
  */
 
 #include <thbase.h>
 #include <stdio.h>
 
 #include "main.h"
+#include "sysinfo.h"
 #include "iLink.h"
 
-// #define DISABLE_ILINK_DUMPING    //For testing within PCSX2
+//#define DISABLE_ILINK_DUMPING	//For testing within PCSX2
 
 static struct ILINKMemMap *ILINKRegisterBase = (struct ILINKMemMap *)ILINK_REGISTER_BASE;
 
@@ -62,9 +63,7 @@ int iLinkInitialize(void)
 
 static void iLinkPhySync(void)
 {
-    while (ILINKRegisterBase->PHYAccess & (RdPhy | WrPhy))
-    {
-    };
+    while (ILINKRegisterBase->PHYAccess & (RdPhy | WrPhy)) {};
 }
 
 unsigned char iLinkReadPhy(unsigned char address)
@@ -72,9 +71,7 @@ unsigned char iLinkReadPhy(unsigned char address)
     ILINKRegisterBase->PHYAccess = (((unsigned int)address) << 24) | RdPhy;
     iLinkPhySync();
 
-    while (!(ILINKRegisterBase->intr0 & iLink_INTR0_PhyRRx))
-    {
-    };
+    while (!(ILINKRegisterBase->intr0 & iLink_INTR0_PhyRRx)) {};
     ILINKRegisterBase->intr0 = iLink_INTR0_PhyRRx;
 
     return (ILINKRegisterBase->PHYAccess & 0xFF);

@@ -2,6 +2,7 @@
 #include <ssbusc.h>
 
 #include "main.h"
+#include "sysinfo.h"
 #include "spu2.h"
 
 int spu2Initialize(void)

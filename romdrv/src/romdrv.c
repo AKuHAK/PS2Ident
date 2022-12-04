@@ -11,7 +11,7 @@ IRX_ID("ROM_file_driver", 2, 1);
 
 extern struct irx_export_table _exp_romdrv;
 
-// Unlike the version used in UDNL, this is only 12-bytes (no padding field).
+//Unlike the version used in UDNL, this is only 12-bytes (no padding field).
 struct RomdirFileStat
 {
     const struct RomDirEntry *romdirent;
@@ -69,7 +69,7 @@ static iop_device_t DeviceOps = {
 
 int _start(int argc, char *argv[])
 {
-    unsigned int result;
+    int result;
 
     if (RegisterLibraryEntries(&_exp_romdrv) != 0)
         return MODULE_NO_RESIDENT_END;
@@ -87,7 +87,7 @@ static int init(void)
     memset(images, 0, sizeof(images));
     memset(fileStats, 0, sizeof(fileStats));
     memset(fileSlots, 0, sizeof(fileSlots));
-    // Add DEV2 (Boot ROM) as rom0. Unlike ROMDRV v1.1, the code for DEV1 is in the ADDDRV module.
+    //Add DEV2 (Boot ROM) as rom0. Unlike ROMDRV v1.1, the code for DEV1 is in the ADDDRV module.
     romGetImageStat((const void *)0xbfc00000, (const void *)0xbfc40000, &images[0]);
     return 0;
 }
@@ -158,23 +158,22 @@ int romDelDevice(int unit)
 
 static int romOpen(iop_file_t *fd, const char *path, int mode)
 {
-    int OldState;
+    struct RomImg *image;
+    int OldState, slotNum, result;
+    struct RomdirFileStat *stat;
 
     if (fd->unit < ROMDRV_MAX_IMAGES)
     {
-        struct RomImg *image;
         image = &images[fd->unit];
 
         if (image->ImageStart != NULL)
         {
-            int slotNum, result;
-            struct RomdirFileStat *stat;
             if (mode != O_RDONLY)
                 return -EACCES;
 
             CpuSuspendIntr(&OldState);
 
-            // Locate a free file slot.
+            //Locate a free file slot.
             for (slotNum = 0; slotNum < ROMDRV_MAX_FILES; slotNum++)
             {
                 if (fileStats[slotNum].data == NULL)
@@ -211,11 +210,11 @@ static int romOpen(iop_file_t *fd, const char *path, int mode)
 static int romClose(iop_file_t *fd)
 {
     struct RomFileSlot *slot = (struct RomFileSlot *)fd->privdata;
+    struct RomdirFileStat *stat;
     int result;
 
     if (slot->slotNum < ROMDRV_MAX_FILES)
     {
-        struct RomdirFileStat *stat;
         stat = &fileStats[slot->slotNum];
 
         if (stat->data != NULL)
@@ -239,11 +238,11 @@ static int romRead(iop_file_t *fd, void *buffer, int size)
 
     stat = &fileStats[slot->slotNum];
 
-    // Bounds check.
+    //Bounds check.
     if (stat->romdirent->size < slot->offset + size)
         size = stat->romdirent->size - slot->offset;
 
-    if (size <= 0) // Ignore 0-byte reads.
+    if (size <= 0) //Ignore 0-byte reads.
         return 0;
 
     memcpy(buffer, (const u8 *)stat->data + slot->offset, size);
@@ -282,7 +281,7 @@ static int romLseek(iop_file_t *fd, int offset, int whence)
             return -EINVAL;
     }
 
-    // Update offset.
+    //Update offset.
     slot->offset = (size < newOffset) ? size : newOffset;
 
     return slot->offset;
@@ -305,7 +304,7 @@ static struct RomImg *romGetImageStat(const void *start, const void *end, struct
         {
             ImageStat->ImageStart  = start;
             ImageStat->RomdirStart = ptr;
-            size                   = file[1].size; // Get size of image from ROMDIR (after RESET).
+            size                   = file[1].size; //Get size of image from ROMDIR (after RESET).
             ImageStat->RomdirEnd   = (const void *)((const u8 *)ptr + size);
             return ImageStat;
         }
@@ -315,7 +314,7 @@ static struct RomImg *romGetImageStat(const void *start, const void *end, struct
     return NULL;
 }
 
-// Similar to the function from UDNL.
+//Similar to the function from UDNL.
 static struct RomdirFileStat *GetFileStatFromImage(const struct RomImg *ImageStat, const char *filename, struct RomdirFileStat *stat)
 {
     unsigned int i, offset, ExtInfoOffset;
@@ -339,7 +338,7 @@ static struct RomdirFileStat *GetFileStatFromImage(const struct RomImg *ImageSta
         RomdirEntry = ImageStat->RomdirStart;
 
         do
-        { // Fast comparison of filenames.
+        { //Fast comparison of filenames.
             if (((u32 *)filename_temp)[0] == ((u32 *)RomdirEntry->name)[0] && ((u32 *)filename_temp)[1] == ((u32 *)RomdirEntry->name)[1] && (*(u16 *)&((u32 *)filename_temp)[2] == *(u16 *)&((u32 *)RomdirEntry->name)[2]))
             {
 
@@ -348,7 +347,7 @@ static struct RomdirFileStat *GetFileStatFromImage(const struct RomImg *ImageSta
                 stat->extinfo   = NULL;
 
                 if (RomdirEntry->ExtInfoEntrySize != 0)
-                { // Unlike the version within UDNL, the existence of the extinfo entry is optional.
+                { //Unlike the version within UDNL, the existence of the extinfo entry is optional.
                     stat->extinfo = (void *)((u8 *)ImageStat->RomdirEnd + ExtInfoOffset);
                 }
 
@@ -359,7 +358,7 @@ static struct RomdirFileStat *GetFileStatFromImage(const struct RomImg *ImageSta
             offset += (RomdirEntry->size + 15) & ~15;
             ExtInfoOffset += RomdirEntry->ExtInfoEntrySize;
             RomdirEntry++;
-        } while (((u32 *)RomdirEntry->name)[0] != 0x00000000); // Until the terminator entry is reached.
+        } while (((u32 *)RomdirEntry->name)[0] != 0x00000000); //Until the terminator entry is reached.
 
         result = NULL;
     }

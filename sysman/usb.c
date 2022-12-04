@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "main.h"
+#include "sysinfo.h"
 #include "usb.h"
 
 int usbInitialize(void)

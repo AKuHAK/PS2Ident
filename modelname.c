@@ -16,34 +16,32 @@ extern char ConsoleROMVER[];
 
 static int ReadModelName(char *name)
 {
-    int stat, result;
+    int stat, result, fd;
 
-    /*  This function is a hybrid between the late ROM browser program and the HDD Browser.
-        In v2.20, there was only a simple null-terminate before calling sceCdRM(), as below.
-        However, this does not support the early PlayStation 2 models.
-        In the HDD Browser, the model name buffer was a global instead of an argument. */
+    /*	This function is a hybrid between the late ROM browser program and the HDD Browser.
+		In v2.20, there was only a simple null-terminate before calling sceCdRM(), as below.
+		However, this does not support the early PlayStation 2 models.
+		In the HDD Browser, the model name buffer was a global instead of an argument.	*/
     memset(name, 0, MODEL_NAME_MAX_LEN);
 
-    /*      Invoking the "Read model" command on the first SCPH-10000 seems to return an error code,
-            but it seems to function on my SCPH-15000...although no valid name is returned!
-            In the HDD OSD, "SCPH-10000" is returned when the ROM v1.00 is detected (It checks rom0:ROMVER).
-            It attempts to read the model name from the ROM OSDSYS program, when ROM v1.01 (late SCPH-10000 and all SCPH-15000 models) is detected.
+    /*		Invoking the "Read model" command on the first SCPH-10000 seems to return an error code,
+			but it seems to function on my SCPH-15000...although no valid name is returned!
+			In the HDD OSD, "SCPH-10000" is returned when the ROM v1.00 is detected (It checks rom0:ROMVER).
+			It attempts to read the model name from the ROM OSDSYS program, when ROM v1.01 (late SCPH-10000 and all SCPH-15000 models) is detected.
 
-            The model name was originally hardcoded into the OSDSYS. The MECHACON EEPROM did not have the model name recorded in it.
+			The model name was originally hardcoded into the OSDSYS. The MECHACON EEPROM did not have the model name recorded in it.
 
-            Oddly, the console models that come with v1.01, like the SCPH-15000 and DTL-H10000,
-            will always be identified as "SCPH-10000" by their ROM OSDSYS programs.
-    */
+			Oddly, the console models that come with v1.01, like the SCPH-15000 and DTL-H10000,
+			will always be identified as "SCPH-10000" by their ROM OSDSYS programs.
+	*/
     if (ConsoleROMVER[0] == '0' && ConsoleROMVER[1] == '1' && ConsoleROMVER[2] == '0')
     {
         if (ConsoleROMVER[3] == '0') // For ROM v1.00 (Early SCPH-10000 units).
             strcpy(name, "SCPH-10000");
         else
-        {
-            int fd;
-            // For ROM v1.01 (Late SCPH-10000, and all SCPH-15000 units).
+        { //For ROM v1.01 (Late SCPH-10000, and all SCPH-15000 units).
             if ((fd = _ps2sdk_open("rom0:OSDSYS", O_RDONLY)) >= 0)
-            { // The model name is located at this address.
+            { //The model name is located at this address.
                 _ps2sdk_lseek(fd, 0x8C808, SEEK_SET);
                 _ps2sdk_read(fd, name, MODEL_NAME_MAX_LEN);
                 _ps2sdk_close(fd);
@@ -52,7 +50,7 @@ static int ReadModelName(char *name)
                 strcpy(name, "Unknown");
         }
 
-        return 0; // Original returned -1
+        return 0; //Original returned -1
     }
     else
     {
@@ -63,7 +61,7 @@ static int ReadModelName(char *name)
             if ((stat & 0x40) || name[0] == '\0')
                 strcpy(name, "unknown");
 
-            return 0; // Original returned -1
+            return 0; //Original returned -1
         }
         else
             return -2;

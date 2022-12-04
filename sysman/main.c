@@ -84,7 +84,8 @@ int SysmanWriteMemory(void *MemoryStart, const void *buffer, unsigned int NumByt
 int SysmanCalcROMRegionSize(const void *ROMStart)
 {
     unsigned int i;
-    int result;
+    int result, TotalROMSize;
+    const struct RomDirEntry *RomDirEnt;
 
     for (result = -ENOENT, i = 0; i < 0x40000; i++)
     {
@@ -101,9 +102,8 @@ int SysmanCalcROMRegionSize(const void *ROMStart)
 
     if (result >= 0)
     {
-        unsigned int TotalROMSize = 0;
-        const struct RomDirEntry *RomDirEnt;
         RomDirEnt    = (const struct RomDirEntry *)&((const char *)ROMStart)[i];
+        TotalROMSize = 0;
         while (RomDirEnt->name[0] != '\0')
         {
             TotalROMSize += RomDirEnt->size;
@@ -216,9 +216,7 @@ static void *SYSMAN_rpc_handler(int fno, void *buffer, int size)
                     old_dmat_id = dmat_id;
                     dmat_id     = EE_memcpy_async(IOBuffer[BufferID], destination, BytesToRead);
                     if (old_dmat_id >= 0)
-                        while (sceSifDmaStat(old_dmat_id) >= 0)
-                        {
-                        }; // Do not overwrite data that has not been transferred over to the EE.
+                        while (sceSifDmaStat(old_dmat_id) >= 0) {}; //Do not overwrite data that has not been transferred over to the EE.
                 }
                 else
                     break;

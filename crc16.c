@@ -6,11 +6,12 @@ static unsigned short int crc16_table[256];
 
 void InitCRC16LookupTable(void)
 {
-    int i, j;
+    register int i, j;
+    unsigned short int crc;
 
     for (i = 0; i < 256; i++)
     {
-        unsigned short int crc = (i << 8);
+        crc = (i << 8);
         for (j = 0; j < 8; j++)
             crc = (crc << 1) ^ ((crc & 0x8000) ? CRC16_POLYNOMIAL : 0);
         crc16_table[i] = crc & 0xFFFF;

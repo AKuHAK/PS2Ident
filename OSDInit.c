@@ -6,31 +6,30 @@
 
 #include "OSDInit.h"
 
-/*  Parsing of values from the EEPROM and setting them into the EE kernel
-    was done in different ways, across different browser versions.
+/*	Parsing of values from the EEPROM and setting them into the EE kernel
+	was done in different ways, across different browser versions.
 
-    The early browsers of ROM v1.00 and v1.01 (SCPH-10000/SCPH-15000)
-    parsed the values within the EEPROM into global variables,
-    which are used to set the individual fields in the OSD configuration.
+	The early browsers of ROM v1.00 and v1.01 (SCPH-10000/SCPH-15000)
+	parsed the values within the EEPROM into global variables,
+	which are used to set the individual fields in the OSD configuration.
 
-    The newer browsers parsed the values into a bitfield structure,
-    which does not have the same layout as the OSD configuration structure.
+	The newer browsers parsed the values into a bitfield structure,
+	which does not have the same layout as the OSD configuration structure.
 
-    Both designs had the parsing and the preparation of the OSD
-    configuration data separated, presumably for clarity of code and
-    to achieve low-coupling (perhaps they belonged to different modules).
- */
+	Both designs had the parsing and the preparation of the OSD
+	configuration data separated, presumably for clarity of code and
+	to achieve low-coupling (perhaps they belonged to different modules).	*/
 
 static char OSDVer[16];
 
 static int ConsoleRegion = -1, ConsoleOSDRegion = -1, ConsoleOSDLanguage = -1;
-static int ConsoleOSDRegionInitStatus = 0, ConsoleRegionParamInitStatus = 0; // 0 = Not init. 1 = Init complete. <0 = Init failed.
+static int ConsoleOSDRegionInitStatus = 0, ConsoleRegionParamInitStatus = 0; //0 = Not init. 1 = Init complete. <0 = Init failed.
 static u8 ConsoleRegionData[16] = {0, 0, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-// Perhaps it once used to read more configuration blocks (original capacity was 7 blocks).
+//Perhaps it once used to read more configuration blocks (original capacity was 7 blocks).
 static u8 OSDConfigBuffer[CONFIG_BLOCK_SIZE * 2];
 
-// Local function prototypes
+//Local function prototypes
 static int InitMGRegion(void);
 static int ConsoleInitRegion(void);
 static int ConsoleRegionParamsInitPS1DRV(const char *romver);
@@ -45,7 +44,7 @@ static int WriteOSDConfigPS2(OSDConfigStore_t *OSDConfigBuffer, const OSDConfig2
 static void ReadConfigFromNVM(u8 *buffer);
 static void WriteConfigToNVM(const u8 *buffer);
 
-// Directory names
+//Directory names
 static char SystemDataFolder[] = "BRDATA-SYSTEM";
 static char SystemExecFolder[] = "BREXEC-SYSTEM";
 static char DVDPLExecFolder[]  = "BREXEC-DVDPLAYER";
@@ -55,26 +54,26 @@ char ConsoleROMVER[ROMVER_MAX_LEN];
 static int InitMGRegion(void)
 {
     u32 stat;
+    int result;
 
     if (ConsoleRegionParamInitStatus == 0)
     {
-        int result;
         do
         {
             if ((result = sceCdAltReadRegionParams(ConsoleRegionData, &stat)) == 0)
-            { // Failed.
+            { //Failed.
                 ConsoleRegionParamInitStatus = 1;
             }
             else
             {
                 if (stat & 0x100)
                 {
-                    // MECHACON does not support this function.
+                    //MECHACON does not support this function.
                     ConsoleRegionParamInitStatus = -1;
                     break;
                 }
                 else
-                { // Status OK, but the result yielded an error.
+                { //Status OK, but the result yielded an error.
                     ConsoleRegionParamInitStatus = 1;
                 }
             }
@@ -127,17 +126,17 @@ static int ConsoleRegionParamsInitPS1DRV(const char *romver)
 /* Present here, but not sure what it is (unused)
 int OSDGetROMRegion(char *out)
 {
-    int result;
+	int result;
 
-    if(ConsoleInitRegion() >= 0)
-    {
-        out[4] = ConsoleRegionData[2];
-        result = 1;
-    }
-    else
-        result = 0;
+	if(ConsoleInitRegion() >= 0)
+	{
+		out[4] = ConsoleRegionData[2];
+		result = 1;
+	}
+	else
+		result = 0;
 
-    return result;
+	return result;
 } */
 
 int OSDGetPS1DRVRegion(char *region)
@@ -172,14 +171,13 @@ int OSDGetDVDPlayerRegion(char *region)
 
 static int GetConsoleRegion(void)
 {
-    int result;
+    char romver[16];
+    int fd, result;
 
     if ((result = ConsoleRegion) < 0)
     {
-        int fd;
         if ((fd = _ps2sdk_open("rom0:ROMVER", O_RDONLY)) >= 0)
         {
-            char romver[16];
             _ps2sdk_read(fd, romver, sizeof(romver));
             _ps2sdk_close(fd);
             ConsoleRegionParamsInitPS1DRV(romver);
@@ -217,7 +215,7 @@ static int CdReadOSDRegionParams(char *OSDVersion)
     {
         if (InitMGRegion() >= 0)
         {
-            result        = 1;
+            result    = 1;
             OSDVersion[4] = ConsoleRegionData[3];
             OSDVersion[5] = ConsoleRegionData[4];
             OSDVersion[6] = ConsoleRegionData[5];
@@ -237,9 +235,10 @@ static int CdReadOSDRegionParams(char *OSDVersion)
 
 static int GetOSDRegion(void)
 {
+    int fd;
+
     if (ConsoleOSDRegionInitStatus == 0 || ConsoleOSDRegion == -1)
     {
-        int fd;
         ConsoleOSDRegionInitStatus = 1;
         if ((fd = _ps2sdk_open("rom0:OSDVER", O_RDONLY)) >= 0)
         {
@@ -285,12 +284,13 @@ static int GetOSDRegion(void)
 
 static void InitOSDDefaultLanguage(int region, const char *language)
 {
+    int DefaultLang;
+
+    DefaultLang = -1;
     if (ConsoleOSDLanguage == -1)
     {
-        int DefaultLang = -1;
         if (language != NULL)
         {
-
             if (strncmp(language, "jpn", 3) == 0)
                 DefaultLang = LANGUAGE_JAPANESE;
             else if (strncmp(language, "eng", 3) == 0)
@@ -319,7 +319,7 @@ static void InitOSDDefaultLanguage(int region, const char *language)
                 DefaultLang = -1;
         }
 
-        // Check if the specified language is valid for the region
+        //Check if the specified language is valid for the region
         if (!OSDIsLanguageValid(region, DefaultLang))
         {
             switch (region)
@@ -370,7 +370,7 @@ int OSDIsLanguageValid(int region, int language)
 }
 
 int OSDGetConsoleRegion(void)
-{ // Default to Japan, if the region cannot be obtained.
+{ //Default to Japan, if the region cannot be obtained.
     int result;
 
     result = GetConsoleRegion();
@@ -404,10 +404,10 @@ int OSDGetDefaultLanguage(void)
     return ConsoleOSDLanguage;
 }
 
-/*    Notes:
-        Version = 0 (Protokernel consoles only) NTSC-J, 1 = ROM versions up to v1.70, 2 = v1.80 and later. 2 = support for extended languages (Osd2 bytes 3 and 4)
-                    In the homebrew PS2SDK, this was previously known as the "region".
-        japLanguage = 0 (Japanese, protokernel consoles only), 1 = non-Japanese (Protokernel consoles only). Newer browsers have this set always to 1.
+/*	Notes:
+		Version = 0 (Protokernel consoles only) NTSC-J, 1 = ROM versions up to v1.70, 2 = v1.80 and later. 2 = support for extended languages (Osd2 bytes 3 and 4)
+					In the homebrew PS2SDK, this was previously known as the "region".
+		japLanguage = 0 (Japanese, protokernel consoles only), 1 = non-Japanese (Protokernel consoles only). Newer browsers have this set always to 1.
 */
 static int ReadOSDConfigPS2(OSDConfig2_t *config, const OSDConfigStore_t *OSDConfigBuffer)
 {
@@ -415,12 +415,12 @@ static int ReadOSDConfigPS2(OSDConfig2_t *config, const OSDConfigStore_t *OSDCon
     config->screenType  = OSDConfigBuffer->PS2.screenType;
     config->videoOutput = OSDConfigBuffer->PS2.videoOutput;
 
-    if (OSDConfigBuffer->PS2.extendedLanguage) // Extended/Basic language set
-    {                                          // One of the 8 standard languages
+    if (OSDConfigBuffer->PS2.extendedLanguage) //Extended/Basic language set
+    {                                          //One of the 8 standard languages
         config->language = OSDConfigBuffer->PS2.language;
     }
     else
-    { // Japanese/English
+    { //Japanese/English
         config->language = OSDConfigBuffer->PS2.japLanguage;
     }
 
@@ -462,46 +462,46 @@ static int WriteOSDConfigPS2(OSDConfigStore_t *OSDConfigBuffer, const OSDConfig2
 
     if (config->language <= LANGUAGE_ENGLISH)
         japLanguage = config->language;
-    else // Do not update the legacy language option if the language was changed to something unsupported.
+    else //Do not update the legacy language option if the language was changed to something unsupported.
         japLanguage = OSDConfigBuffer->PS2.japLanguage;
 
-    // 0x0F
+    //0x0F
     OSDConfigBuffer->PS2.videoOutput      = config->videoOutput;
     OSDConfigBuffer->PS2.japLanguage      = japLanguage;
     OSDConfigBuffer->PS2.extendedLanguage = 1;
     OSDConfigBuffer->PS2.spdifMode        = config->spdifMode;
     OSDConfigBuffer->PS2.screenType       = config->screenType;
 
-    // 0x10
+    //0x10
     OSDConfigBuffer->PS2.language         = config->language;
     OSDConfigBuffer->PS2.version          = version;
 
-    // 0x11
+    //0x11
     OSDConfigBuffer->PS2.timezoneOffsetHi = config->timezoneOffset >> 8;
     OSDConfigBuffer->PS2.dateFormat       = config->dateFormat;
     OSDConfigBuffer->PS2.timeFormat       = config->timeFormat;
     OSDConfigBuffer->PS2.daylightSaving   = config->daylightSaving;
     OSDConfigBuffer->PS2.osdInit          = osdInitValue;
 
-    // 0x12
+    //0x12
     OSDConfigBuffer->PS2.timezoneOffsetLo = config->timezoneOffset;
 
-    // 0x13
+    //0x13
     OSDConfigBuffer->PS2.timezoneHi       = config->timezone >> 8;
-    OSDConfigBuffer->PS2.unknownB13_01    = OSDConfigBuffer->PS2.unknownB13_01; // Carry over
+    OSDConfigBuffer->PS2.unknownB13_01    = OSDConfigBuffer->PS2.unknownB13_01; //Carry over
     OSDConfigBuffer->PS2.rcEnabled        = config->rcEnabled;
     OSDConfigBuffer->PS2.rcGameFunction   = config->rcGameFunction;
     OSDConfigBuffer->PS2.rcSupported      = config->rcSupported;
     OSDConfigBuffer->PS2.dvdpProgressive  = config->dvdpProgressive;
 
-    // 0x14
+    //0x14
     OSDConfigBuffer->PS2.timezoneLo       = config->timezone;
 }
 
 static void ReadConfigFromNVM(u8 *buffer)
-{ /*    Hmm. What should the check for stat be? In v1.xx, it seems to be a check against 0x9. In v2.20, it checks against 0x81.
-        In the HDD Browser, reading checks against 0x81, while writing checks against 0x9.
-        But because we are targeting all consoles, it would be probably safer to follow the HDD Browser. */
+{ /*	Hmm. What should the check for stat be? In v1.xx, it seems to be a check against 0x9. In v2.20, it checks against 0x81.
+		In the HDD Browser, reading checks against 0x81, while writing checks against 0x9.
+		But because we are targeting all consoles, it would be probably safer to follow the HDD Browser. */
     int result;
     u32 stat;
 
@@ -562,7 +562,7 @@ int OSDSaveConfigToNVM(const OSDConfig1_t *osdConfigPS1, const OSDConfig2_t *osd
     return 0;
 }
 
-// Directory management
+//Directory management
 const char *OSDGetHistoryDataFolder(void)
 {
     return SystemDataFolder;
