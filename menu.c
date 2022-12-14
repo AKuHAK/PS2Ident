@@ -1282,13 +1282,13 @@ static void LoadBoard2Information(const struct SystemInformation *SystemInformat
         UISetType(&Board2ReportMenu, BOARD2_ID_MECHA_REV_MINOR, MITEM_VALUE);
         UISetValue(&Board2ReportMenu, BOARD2_ID_MECHA_REV_MINOR, SystemInformation->mainboard.MECHACONVersion[2]);
         UISetType(&Board2ReportMenu, BOARD2_ID_MECHA_NAME, MITEM_STRING);
-        UISetString(&Board2ReportMenu, BOARD2_ID_MECHA_NAME, GetMECHACONChipDesc((u32)(SystemInformation->mainboard.MECHACONVersion[1]) << 8 | (u32)(SystemInformation->mainboard.MECHACONVersion[2])));
+        UISetString(&Board2ReportMenu, BOARD2_ID_MECHA_NAME, GetMECHACONChipDesc((u32)(SystemInformation->mainboard.MECHACONVersion[1]) << 16 | (u32)(SystemInformation->mainboard.MECHACONVersion[2]) << 8 | SystemInformation->mainboard.MECHACONVersion[0]));
         UISetType(&SummaryMenu, SUM_BOARD2_ID_MECHA_REV_MAJOR, MITEM_VALUE);
         UISetValue(&SummaryMenu, SUM_BOARD2_ID_MECHA_REV_MAJOR, SystemInformation->mainboard.MECHACONVersion[1]);
         UISetType(&SummaryMenu, SUM_BOARD2_ID_MECHA_REV_MINOR, MITEM_VALUE);
         UISetValue(&SummaryMenu, SUM_BOARD2_ID_MECHA_REV_MINOR, SystemInformation->mainboard.MECHACONVersion[2]);
         UISetType(&SummaryMenu, SUM_BOARD2_ID_MECHA_NAME, MITEM_STRING);
-        UISetString(&SummaryMenu, SUM_BOARD2_ID_MECHA_NAME, GetMECHACONChipDesc((u32)(SystemInformation->mainboard.MECHACONVersion[1]) << 8 | (u32)(SystemInformation->mainboard.MECHACONVersion[2])));
+        UISetString(&SummaryMenu, SUM_BOARD2_ID_MECHA_NAME, GetMECHACONChipDesc((u32)(SystemInformation->mainboard.MECHACONVersion[1]) << 16 | (u32)(SystemInformation->mainboard.MECHACONVersion[2]) << 8 | SystemInformation->mainboard.MECHACONVersion[0]));
 
         UISetType(&Board2ReportMenu, BOARD2_ID_MECHA_REGION, MITEM_VALUE);
         UISetValue(&Board2ReportMenu, BOARD2_ID_MECHA_REGION, SystemInformation->mainboard.MECHACONVersion[0]);

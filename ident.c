@@ -249,8 +249,13 @@ int GetPeripheralInformation(struct SystemInformation *SystemInformation)
     SystemInformation->mainboard.ConModelID[1] = SystemInformation->ConsoleID[1];
     SystemInformation->mainboard.EMCSID        = SystemInformation->ConsoleID[7];
     strcpy(SystemInformation->mainboard.MainboardName, GetMainboardModelDesc(&SystemInformation->mainboard));
-    strcpy(SystemInformation->chassis, GetChassisDesc(&SystemInformation->mainboard));
-
+    // strcpy(SystemInformation->chassis, GetChassisDesc(&SystemInformation->mainboard));
+    strcpy(SystemInformation->chassis, GetChassisDesc2(((unsigned int)(SystemInformation->mainboard.MECHACONVersion[3]) << 24 |
+                                                        (unsigned int)(SystemInformation->mainboard.MECHACONVersion[1]) << 16 |
+                                                        (unsigned int)(SystemInformation->mainboard.MECHACONVersion[2]) << 8 |
+                                                        SystemInformation->mainboard.MECHACONVersion[0]),
+                                                       SystemInformation->mainboard.ADD010,
+                                                       &SystemInformation->mainboard));
     CheckROM(&SystemInformation->mainboard);
 
     return 0;
@@ -575,14 +580,14 @@ const char *GetSPU2ChipDesc(unsigned short int revision)
     return description;
 }
 
-const char *GetMECHACONChipDesc(unsigned short int revision)
+const char *GetMECHACONChipDesc(unsigned int revision)
 {
     const char *description;
 
     if (revision >= 0x050000)
-        revision = revision & 0xfffeff; // Retail and debug chips are identical
+        revision = revision & 0xfffeff; // Retail and debug Dragons are identical
     if (revision != 0x050607)
-        revision = revision & 0xffff00; // Mexico unit is unique
+        revision = revision & 0xffff00; // Clear region byte for all Dragons, except of Mexico
 
     switch (revision)
     {
@@ -610,7 +615,7 @@ const char *GetMECHACONChipDesc(unsigned short int revision)
         case 0x020902:
         case 0x020903:
         case 0x020904:
-            description = "CXP102064-704R"; // DTL-H3000x, DTL-H3010x
+            description = "CXP102064-704R (Not confirmed)"; // DTL-H3000x, DTL-H3010x
             break;
         case 0x020D00:
         case 0x020D01:
@@ -636,10 +641,13 @@ const char *GetMECHACONChipDesc(unsigned short int revision)
             description = "CXP102064-005R";
             break;
         case 0x020800:
-            description = "CXP102064-006R";
+            description = "CXP102064-006R (Not confirmed)";
             break;
         case 0x020C00:
             description = "CXP102064-007R";
+            break;
+        case 0x020E00:
+            description = "CXP102064-008R";
             break;
         // US region only
         case 0x020401:
@@ -651,20 +659,36 @@ const char *GetMECHACONChipDesc(unsigned short int revision)
         case 0x020C01:
             description = "CXP102064-103R";
             break;
+        case 0x020E01:
+            description = "CXP102064-104R";
+            break;
         // EU region only
+        case 0x020402:
+            description = "CXP102064-201R";
+            break;
         case 0x020602:
             description = "CXP102064-202R";
             break;
         case 0x020C02:
             description = "CXP102064-203R";
             break;
+        case 0x020E02:
+            description = "CXP102064-204R";
+            break;
         // Australia region only
+        case 0x020403:
+            description = "CXP102064-301R";
+            break;
         case 0x020603:
             description = "CXP102064-302R";
             break;
         case 0x020C03:
             description = "CXP102064-303R";
             break;
+        case 0x020E03:
+            description = "CXP102064-304R";
+            break;
+        // mecha v3
         // US region only
         case 0x030001:
             description = "CXP103049-101GG";
@@ -823,6 +847,44 @@ const char *GetMRPDesc(unsigned short int id)
     {
         description = "Unknown";
     }
+
+    return description;
+}
+
+const char *GetChassisDesc2(unsigned int mecharevision, unsigned short int add0x10, const struct PS2IDBMainboardEntry *SystemInformation)
+{
+    const char *description;
+
+    if (mecharevision >= 0x050000)
+        mecharevision = mecharevision & 0xfffffeff; // Retail and debug Dragons are identical
+    if (mecharevision != 0x050607)
+        mecharevision = mecharevision & 0xffffff00; // Clear region byte for all Dragons, except of Mexico
+
+    if (mecharevision >= 0x01000000)
+        description = "X-Chassis"; // PSX, XPD-001, XPD-005
+    else if (mecharevision == 0x060C00)
+        description = "N-, P-, R- chassis"; // SCPH-79000, GH-061-xx, GH-062-xx, SCPH-90000, TVcombo, GH-070, GH-071, bootrom 0220, SCPH-90000, GH-072, bootrom 0230
+    // you can differ between "N-, P-, R- chassis via BOOTROM (230 for R) or Model id (N vs P)
+    else if (mecharevision == 0x060A00)
+        description = "M-chassis"; // SCPH-77000, GH-051-xx, GH-052-xx, Mechacon 6.10, 6.11
+    else if (mecharevision == 0x060600)
+        description = "L-chassis"; // SCPH-75000, GH-037-xx, GH-040-xx, GH-041-xx, Mechacon 6.6, 6.7
+    else if ((mecharevision >= 0x060000) && (mecharevision < 0x060600))
+        description = "K-chassis"; // SCPH-70000, GH-032-xx, GH-035-xx, Mechacon 6.0-6.5
+    else if ((mecharevision >= 0x050000) && (mecharevision < 0x060000))
+        description = "H- ,I- ,J- Chassis"; // SCPH-50000, GH-023, GH-026, GH-029
+    // you can differ between H- ,I- ,J- chassis via DVD player version
+    else if ((mecharevision >= 0x030600) && (mecharevision < 0x030900))
+        description = "G-chassis"; // SCPH-37000 and SCPH-39000, ADD0x10 0xb009, 0xb029, GH-017, GH-018, GH-019, GH-022, mechacon 3.6-3.8
+    else if ((mecharevision >= 0x030000) && (mecharevision < 0x030600))
+        description = "F-chassis"; // SCPH-30000 and SCPH-30000R, ADD0x10 0xa809, 0xa829, GH-015
+    // TODO: B, C, D chassis very hard to differ
+    else if ((add0x10 & 0xf0f0) == 0x0000)
+        description = "A-, AB- chassis"; // SCPH-10000, SCPH-15000, SCPH-18000
+    // A, AB can be differed from others by add0x10
+    // A and AB can be differed by IOP processor 15 vs 1f
+    else
+        description = "Unknown";
 
     return description;
 }
@@ -1047,7 +1109,11 @@ int WriteSystemInformation(FILE *stream, const struct SystemInformation *SystemI
                         "    System type:         0x%02x (%s)\r\n"
                         "    DSP revision:        %u (%s)\r\n",
                 SystemInformation->mainboard.MECHACONVersion[1], SystemInformation->mainboard.MECHACONVersion[2],
-                GetMECHACONChipDesc((unsigned int)(SystemInformation->mainboard.MECHACONVersion[1]) << 16 | (unsigned int)(SystemInformation->mainboard.MECHACONVersion[2]) << 8 | SystemInformation->mainboard.MECHACONVersion[0]), SystemInformation->mainboard.MECHACONVersion[0], GetRegionDesc(SystemInformation->mainboard.MECHACONVersion[0]),
+                GetMECHACONChipDesc((unsigned int)(SystemInformation->mainboard.MECHACONVersion[1]) << 16 |
+                                    (unsigned int)(SystemInformation->mainboard.MECHACONVersion[2]) << 8 |
+                                    SystemInformation->mainboard.MECHACONVersion[0]),
+                SystemInformation->mainboard.MECHACONVersion[0],
+                GetRegionDesc(SystemInformation->mainboard.MECHACONVersion[0]),
                 SystemInformation->mainboard.MECHACONVersion[3], GetSystemTypeDesc(SystemInformation->mainboard.MECHACONVersion[3]),
                 SystemInformation->DSPVersion[1], GetDSPDesc(SystemInformation->DSPVersion[1]));
     }
