@@ -49,7 +49,8 @@ const char *GetRegionDesc(unsigned char region);
 const char *GetMainboardModelDesc(const struct PS2IDBMainboardEntry *SystemInformation);
 const char *GetMRPDesc(unsigned short int id);
 const char *GetChassisDesc(const struct PS2IDBMainboardEntry *SystemInformation);
-const char *GetChassisDesc2(unsigned int mecharevision, unsigned short int add0x10, const struct PS2IDBMainboardEntry *SystemInformation);
+const char *GetChassisDesc2(unsigned int mecharevision, unsigned short int add0x10, unsigned short int ioprevision,
+                            char dvdplayerminor);
 const char *GetModelIDDesc(unsigned int id);
 const char *GetEMCSIDDesc(unsigned char id);
 const char *GetADD010Desc(unsigned short int id);

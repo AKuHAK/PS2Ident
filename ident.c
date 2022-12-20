@@ -255,7 +255,9 @@ int GetPeripheralInformation(struct SystemInformation *SystemInformation)
                                                         (unsigned int)(SystemInformation->mainboard.MECHACONVersion[2]) << 8 |
                                                         SystemInformation->mainboard.MECHACONVersion[0]),
                                                        SystemInformation->mainboard.ADD010,
-                                                       &SystemInformation->mainboard));
+                                                       SystemInformation->mainboard.iop.revision,
+                                                       SystemInformation->DVDPlayerVer[3]));
+    // &SystemInformation->mainboard));
     CheckROM(&SystemInformation->mainboard);
 
     return 0;
@@ -585,9 +587,11 @@ const char *GetMECHACONChipDesc(unsigned int revision)
     const char *description;
 
     if (revision >= 0x050000)
+    {
         revision = revision & 0xfffeff; // Retail and debug Dragons are identical
-    if (revision != 0x050607)
-        revision = revision & 0xffff00; // Clear region byte for all Dragons, except of Mexico
+        if (revision != 0x050607)
+            revision = revision & 0xffff00; // Clear region byte for all Dragons, except of Mexico
+    }
 
     switch (revision)
     {
@@ -851,17 +855,22 @@ const char *GetMRPDesc(unsigned short int id)
     return description;
 }
 
-const char *GetChassisDesc2(unsigned int mecharevision, unsigned short int add0x10, const struct PS2IDBMainboardEntry *SystemInformation)
+const char *GetChassisDesc2(unsigned int mecharevision, unsigned short int add0x10, unsigned short int ioprevision,
+                            char dvdplayerminor)
 {
     const char *description;
 
     if (mecharevision >= 0x050000)
+    {
         mecharevision = mecharevision & 0xfffffeff; // Retail and debug Dragons are identical
-    if (mecharevision != 0x050607)
-        mecharevision = mecharevision & 0xffffff00; // Clear region byte for all Dragons, except of Mexico
+        if (mecharevision != 0x050607)
+            mecharevision = mecharevision & 0xffffff00; // Clear region byte for all Dragons, except of Mexico
+    }
 
     if (mecharevision >= 0x01000000)
         description = "X-Chassis"; // PSX, XPD-001, XPD-005
+    else if (mecharevision == 0x030900)
+        description = "PS3-Chassis"; // PS3 BC or PS3 semi BC
     else if (mecharevision == 0x060C00)
         description = "N-, P-, R- chassis"; // SCPH-79000, GH-061-xx, GH-062-xx, SCPH-90000, TVcombo, GH-070, GH-071, bootrom 0220, SCPH-90000, GH-072, bootrom 0230
     // you can differ between "N-, P-, R- chassis via BOOTROM (230 for R) or Model id (N vs P)
@@ -872,17 +881,36 @@ const char *GetChassisDesc2(unsigned int mecharevision, unsigned short int add0x
     else if ((mecharevision >= 0x060000) && (mecharevision < 0x060600))
         description = "K-chassis"; // SCPH-70000, GH-032-xx, GH-035-xx, Mechacon 6.0-6.5
     else if ((mecharevision >= 0x050000) && (mecharevision < 0x060000))
-        description = "H- ,I- ,J- Chassis"; // SCPH-50000, GH-023, GH-026, GH-029
+    {
+        if (dvdplayerminor == '0')
+            description = "H-chassis"; // SCPH-50000, GH-023
+        else if (dvdplayerminor == '2')
+            description = "I-chassis"; // SCPH-50000, GH-026
+        else if ((dvdplayerminor == '3') || (dvdplayerminor == '4'))
+            description = "J-chassis"; // SCPH-50000, GH-029
+        else
+            description = "H- ,I- ,J- Chassis (unknown)"; // SCPH-50000, GH-023, GH-026, GH-029
+    }
     // you can differ between H- ,I- ,J- chassis via DVD player version
     else if ((mecharevision >= 0x030600) && (mecharevision < 0x030900))
         description = "G-chassis"; // SCPH-37000 and SCPH-39000, ADD0x10 0xb009, 0xb029, GH-017, GH-018, GH-019, GH-022, mechacon 3.6-3.8
     else if ((mecharevision >= 0x030000) && (mecharevision < 0x030600))
         description = "F-chassis"; // SCPH-30000 and SCPH-30000R, ADD0x10 0xa809, 0xa829, GH-015
     // TODO: B, C, D chassis very hard to differ
-    else if ((add0x10 & 0xf0f0) == 0x0000)
-        description = "A-, AB- chassis"; // SCPH-10000, SCPH-15000, SCPH-18000
-    // A, AB can be differed from others by add0x10
-    // A and AB can be differed by IOP processor 15 vs 1f
+    // seems B/C has mecha 2.4-2.6, D - has 2.6-2.14, add0x10 unsafe
+    else if ((mecharevision >= 0x020800) && (mecharevision < 0x030000))
+        description = "D-chassis"; // not sure
+    // A, AB can be differed from others by add0x10: 0x0000, 0x0001, 0x0801
+    else if ((add0x10 & 0xf7fe) == 0x0000)
+    {
+        // A and AB can be differed by IOP processor 15 vs 1f
+        if (ioprevision == 0x0015)
+            description = "A-chassis"; // SCPH-10000, SCPH-15000
+        else if (ioprevision == 0x001f)
+            description = "AB-chassis"; // SCPH-18000
+        else
+            description = "A-, AB-chassis (unknown)"; // SCPH-1k
+    }
     else
         description = "Unknown";
 
