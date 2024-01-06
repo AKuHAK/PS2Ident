@@ -554,7 +554,7 @@ int GetPeripheralInformation(struct SystemInformation *SystemInformation)
             SystemInformation->mainboard.MECHACONVersion[0] = SystemInformation->mainboard.MECHACONVersion[0] - 0x80;
         }
     }
-    if (sceCdReadConsoleID(SystemInformation->ConsoleID, &result) == 0 || (result & 0x80))
+    if (sceCdReadModelID(SystemInformation->ConsoleID, &result) == 0 || (result & 0x80))
     {
         printf("Failed to read console ID. Stat: %x\n", result);
         SystemInformation->mainboard.status |= PS2IDB_STAT_ERR_CONSOLEID;
