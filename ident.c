@@ -39,7 +39,7 @@
 extern struct UIDrawGlobal UIDrawGlobal;
 
 #define GS_REG_CSR          (volatile u64 *)0x12001000 // System Status
-#define readDevMemEEIOP_src 1;                         // 0=IOP / 1=EE
+#define readDevMemEEIOP_src 1                          // 0=IOP / 1=EE
 
 
 int readDevMemEEIOP(const void *MemoryStart, void *buffer, unsigned int NumBytes, int mode)
