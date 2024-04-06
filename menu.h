@@ -12,4 +12,4 @@ struct ProgressBarCoords
 #define DEVICE_LIST_Y      64
 
 void RedrawDumpingScreen(const struct SystemInformation *SystemInformation, const struct DumpingStatus *DumpingStatus);
-void RedrawLoadingScreen(unsigned int frame);
+void RedrawLoadingScreen(unsigned int frame, const char *textToDisplay);

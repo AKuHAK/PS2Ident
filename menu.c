@@ -1879,7 +1879,7 @@ void RedrawDumpingScreen(const struct SystemInformation *SystemInformation, cons
     }
 }
 
-void RedrawLoadingScreen(unsigned int frame)
+void RedrawLoadingScreen(unsigned int frame, const char *textToDisplay)
 {
     short int xRel, x, y;
     int NumDots;
@@ -1894,7 +1894,8 @@ void RedrawLoadingScreen(unsigned int frame)
 
     x = 420;
     y = 360;
-    FontPrintfWithFeedback(&UIDrawGlobal, x, y, 0, 1.8f, GS_WHITE_FONT, GetUILabel(SYS_UI_LBL_LOADING), &xRel, NULL);
+    // FontPrintfWithFeedback(&UIDrawGlobal, x, y, 0, 1.8f, GS_WHITE_FONT, GetUILabel(SYS_UI_LBL_LOADING), &xRel, NULL);
+    FontPrintfWithFeedback(&UIDrawGlobal, x, y, 0, 1.0f, GS_WHITE_FONT, textToDisplay, &xRel, NULL);
     x += xRel;
     switch (NumDots)
     {

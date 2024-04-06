@@ -267,7 +267,7 @@ int main(int argc, char *argv[])
     FrameNum = 0;
     while (PollSema(SystemInitSema) != SystemInitSema)
     {
-        RedrawLoadingScreen(FrameNum);
+        RedrawLoadingScreen(FrameNum, "Test loading...");
         FrameNum++;
     }
     DeleteSema(SystemInitSema);
