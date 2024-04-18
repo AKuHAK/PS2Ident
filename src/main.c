@@ -320,14 +320,5 @@ int main(int argc, char *argv[])
 }
 
 #ifdef DISABLE_LIBCGLUE_INIT
-// void _libcglue_timezone_update() {}
-// DISABLE_PATCHED_FUNCTIONS();
-// DISABLE_EXTRA_TIMERS_FUNCTIONS();
-// PS2_DISABLE_AUTOSTART_PTHREAD();
-void _libcglue_init() {
-    sio_puts("_libcglue_init overriden\n");
-}
-void _libcglue_deinit() {
-    sio_puts("_libcglue_deinit overriden\n");
-}
+void _libcglue_rtc_update() {}
 #endif
