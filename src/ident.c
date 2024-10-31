@@ -63,10 +63,7 @@ int readDevMemEEIOP(const void *MemoryStart, void *buffer, unsigned int NumBytes
         unsigned int i;
         const u8 *mpt = MemoryStart;
         u8 *bpt       = buffer;
-        for (i = 0; i < NumBytes; i++, mpt++, bpt++)
-        {
-            *bpt = *mpt;
-        }
+        memcpy(bpt, mpt, NumBytes);
         FlushCache(0); // should be enough to fix it
 
         if ((u32)MemoryStart & 0x80000000)
