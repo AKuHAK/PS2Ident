@@ -299,48 +299,42 @@ int DumpRom(const char *filename, const struct SystemInformation *SystemInformat
             return -EINVAL;
     }
 
-    buffer1        = memalign(64, MEM_IO_BLOCK_SIZE);
-    buffer2        = memalign(64, MEM_IO_BLOCK_SIZE);
+    pBuffer        = memalign(64, MEM_IO_BLOCK_SIZE);
 
     BytesRemaining = ROMSize;
     if ((file = fopen(filename, "wb")) != NULL)
     {
-        for (pBuffer = buffer1, prevSize = BytesRemaining; BytesRemaining > 0; MemDumpStart += BytesToRead, BytesRemaining -= BytesToRead)
+        while (BytesRemaining > 0)
         {
             BytesToRead = BytesRemaining > MEM_IO_BLOCK_SIZE ? MEM_IO_BLOCK_SIZE : BytesRemaining;
-
             SysmanSync(0);
             while (readDevMemEEIOP(MemDumpStart, pBuffer, BytesToRead, 1) != 0)
                 nopdelay();
 
             RedrawDumpingScreen(SystemInformation, DumpingStatus);
-            pBuffer = pBuffer == buffer1 ? buffer2 : buffer1;
-            if (BytesRemaining < ROMSize)
+            if (fwrite(pBuffer, 1, BytesToRead, file) != BytesToRead)
             {
-                if (fwrite(UNCACHED_SEG(pBuffer), 1, prevSize, file) != prevSize)
-                {
-                    fclose(file);
-                    result = -EIO;
-                    break;
-                }
-
-                DumpingStatus[DumpingRegion].progress = 1.00f - (float)BytesRemaining / ROMSize;
-            }
-            prevSize = BytesToRead;
-        }
-
-        if (result == 0)
-        {
-            pBuffer = pBuffer == buffer1 ? buffer2 : buffer1;
-            SysmanSync(0);
-
-            if (fwrite(UNCACHED_SEG(pBuffer), 1, prevSize, file) == prevSize)
-                DumpingStatus[DumpingRegion].progress = 1.00f - (float)BytesRemaining / ROMSize;
-            else
+                fclose(file);
                 result = -EIO;
+                break;
+            }
+            DumpingStatus[DumpingRegion].progress = 1.00f - (float)BytesRemaining / ROMSize;
+            BytesRemaining -= BytesToRead;
         }
 
+        DEBUG_PRINTF("Closing the file!!\n");
         fclose(file);
+
+        // Print file size
+        struct stat st;
+        if (stat(filename, &st) == 0 && st.st_size == ROMSize)
+        {
+            DEBUG_PRINTF("Dumped file %s with size %d bytes\n", filename, st.st_size);
+        }
+        else
+        {
+            result = -ENOENT;
+        }
     }
     else
         result = -ENOENT;
