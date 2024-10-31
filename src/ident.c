@@ -219,8 +219,7 @@ int GetPeripheralInformation(struct SystemInformation *SystemInformation)
     if (sceGetDspVersion(SystemInformation->DSPVersion, &stat) == 0 || (stat & 0x80) != 0)
     {
         DEBUG_PRINTF("Failed to read DSP version. Stat: %x\n", stat);
-        SystemInformation->DSPVersion[0] = 0;
-        SystemInformation->DSPVersion[1] = 0;
+        SystemInformation->DSPVersion = 0;
     }
     sceCdAltMV(SystemInformation->mainboard.MECHACONVersion, &stat);
     DEBUG_PRINTF("MECHACON version: %u %u %u %u\n", SystemInformation->mainboard.MECHACONVersion[0], SystemInformation->mainboard.MECHACONVersion[1], SystemInformation->mainboard.MECHACONVersion[2], SystemInformation->mainboard.MECHACONVersion[3]);
@@ -1173,20 +1172,17 @@ const char *GetDSPDesc(unsigned short int revision)
 
     switch (revision)
     {
-        case 0x0000:
+        case 0x00:
             description = "CXD1869Q";
             break;
-        case 0x0001:
+        case 0x01:
             description = "CXD1869AQ";
             break;
-        case 0x0002:
+        case 0x02:
             description = "CXD1869BQ/CXD1886Q";
             break;
-        case 0x0003:
+        case 0x03:
             description = "CXD3098Q/CXD3098AQ";
-            break;
-        case 0x0103:
-            description = "PS3 virtual DSP";
             break;
         default:
             description = "Unknown";
@@ -1835,12 +1831,12 @@ int WriteSystemInformation(FILE *stream, const struct SystemInformation *SystemI
                         "    Revision:            %u.%02u (%s)\r\n"
                         "    MagicGate region:    0x%02x (%s)\r\n"
                         "    System type:         0x%02x (%s)\r\n"
-                        "    DSP revision:        %u.%u (%s)\r\n",
+                        "    DSP revision:        %u (%s)\r\n",
                 SystemInformation->mainboard.MECHACONVersion[1], SystemInformation->mainboard.MECHACONVersion[2],
                 GetMECHACONChipDesc((unsigned int)(SystemInformation->mainboard.MECHACONVersion[1]) << 16 | (unsigned int)(SystemInformation->mainboard.MECHACONVersion[2]) << 8 | SystemInformation->mainboard.MECHACONVersion[0]),
                 SystemInformation->mainboard.MECHACONVersion[0], GetRegionDesc(SystemInformation->mainboard.MECHACONVersion[0]),
                 SystemInformation->mainboard.MECHACONVersion[3], GetSystemTypeDesc(SystemInformation->mainboard.MECHACONVersion[3]),
-                SystemInformation->DSPVersion[0], SystemInformation->DSPVersion[1], GetDSPDesc(SystemInformation->DSPVersion[0] | (SystemInformation->DSPVersion[1] << 8)));
+                SystemInformation->DSPVersion, GetDSPDesc(SystemInformation->DSPVersion));
     }
     else
     {

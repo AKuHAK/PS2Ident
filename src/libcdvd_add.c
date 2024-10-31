@@ -129,8 +129,8 @@ int sceGetDspVersion(u8 *buffer, u32 *stat)
         *stat = out_buffer[0];
     }
 
-    /* 2 bytes: minor and major version */
-    memcpy(buffer, &out_buffer[1], 2);
+    /* 1 byte: version */
+    *buffer = out_buffer[1];
 
     return result;
 }
