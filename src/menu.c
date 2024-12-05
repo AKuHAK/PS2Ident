@@ -1353,9 +1353,9 @@ static void LoadBoard2Information(const struct SystemInformation *SystemInformat
 
 
         UISetType(&Board2ReportMenu, BOARD2_ID_DSP_REV, MITEM_VALUE);
-        UISetValue(&Board2ReportMenu, BOARD2_ID_DSP_REV, SystemInformation->DSPVersion[0]);
+        UISetValue(&Board2ReportMenu, BOARD2_ID_DSP_REV, SystemInformation->DSPVersion);
         UISetType(&Board2ReportMenu, BOARD2_ID_DSP_NAME, MITEM_STRING);
-        UISetString(&Board2ReportMenu, BOARD2_ID_DSP_NAME, GetDSPDesc(SystemInformation->DSPVersion[0]));
+        UISetString(&Board2ReportMenu, BOARD2_ID_DSP_NAME, GetDSPDesc(SystemInformation->DSPVersion));
     }
     else
     {

@@ -15,7 +15,7 @@ struct SystemInformation
     char DVDPlayerVer[16]; // TODO: move to ROM
     char OSDVer[16];       // TODO: move to ROM
     char PS1DRVVer[32];    // TODO: move to ROM
-    u8 DSPVersion[2];
+    u8 DSPVersion;
     unsigned char SMAP_MAC_address[6]; // only for 70k is real, Deckard from eeprom, FATS from network adapter
 };
 
