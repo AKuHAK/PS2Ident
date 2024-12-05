@@ -645,6 +645,9 @@ const char *GetSSBUSIFDesc(unsigned char revision, unsigned char EE_revision)
         case 0x32:
             description = "combined with SPU2";
             break;
+        case 0xFF:
+            description = "Not detected";
+            break;
         default:
             description = "Missing chip";
             break;
@@ -821,7 +824,7 @@ const char *GetBOOTROMDesc(const char *extinfo, const char *romver, const char *
     else if (strcmp(combined, "20000224-172900D") == 0) description = "Unknown chip";
     else if (strcmp(combined, "20000727-013725C") == 0) description = "B10010";
     else if (strcmp(combined, "20000727-013728D") == 0) description = "B11010 (Not confirmed)";
-    else if (strcmp(combined, "20000901-114731Z") == 0) description = "A-000-010 (Not confirmed)";
+    else if (strcmp(combined, "20000901-114731Z") == 0) description = "A-000-010";
     else if (strcmp(combined, "20000902-234318C") == 0) description = "B10020 (Not confirmed)";
     else if (strcmp(combined, "20000902-234321C") == 0) description = "B20020";
     else if (strcmp(combined, "20000902-234323D") == 0) description = "B21020 (Not confirmed)";
@@ -968,6 +971,9 @@ const char *GetMECHACONChipDesc(unsigned int revision)
             break;
         case 0x010900:
             description = "CXP102064-751R"; // only DTL-T10000
+            break;
+        case 0x02040A:
+            description = "CXP102064-651R"; // only Arcade machines
             break;
         case 0x020501:
         case 0x020502:
@@ -1174,7 +1180,7 @@ const char *GetSystemTypeDesc(unsigned char type)
     if (type == 0)
         description = "PlayStation 2";
     else if (type == 1)
-        description = "PSX";
+        description = "PSX/Arcade";
     else
         description = "Unknown";
 
@@ -1211,6 +1217,9 @@ const char *GetRegionDesc(unsigned char region)
         case 7:
             description = "Mexico";
             break;
+        case 0xA:
+            description = "Arcade";
+            break;
         default:
             description = "Unknown";
             break;
@@ -1225,6 +1234,7 @@ const char *GetMRPDesc(unsigned short int id)
     switch (id)
     {
         case 0x00:
+        case 0xFF:
             description = "Not detected";
             break;
         case 0x10:
