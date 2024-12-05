@@ -38,7 +38,7 @@ jobs:
   release:
     needs: [build]
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/new_old'
+    if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/coh_test'
     steps:
     - uses: actions/checkout@v4
 
@@ -73,7 +73,7 @@ jobs:
         7z a PS2Ident-system2x6_arcade.7z PS2Ident-SYSTEM2x6/*
 
     - name: Create pre-release
-      if: github.ref == 'refs/heads/new_old'
+      if: github.ref == 'refs/heads/coh_test'
       uses: marvinpinto/action-automatic-releases@latest
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
