@@ -1,0 +1,16 @@
+iomanX_IMPORTS_start
+I_iomanX_AddDrv
+I_iomanX_DelDrv
+iomanX_IMPORTS_end
+
+stdio_IMPORTS_start
+I_printf
+stdio_IMPORTS_end
+
+acflash_IMPORTS_start
+I_acFlashInfo
+I_acFlashErase
+I_acFlashProgram
+I_acFlashRead
+I_acFlashVerify
+acflash_IMPORTS_end

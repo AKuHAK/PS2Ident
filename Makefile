@@ -3,6 +3,8 @@ DSNET_HOST_SUPPORT ?= 0
 DEBUG ?= 0
 COH ?= 0
 
+
+
 EE_SIO ?= 0
 DISABLE_ILINK_DUMPING ?= 0
 
@@ -47,6 +49,8 @@ ifeq ($(EE_SIO),1)
 endif
 
 ifeq ($(COH),1)
+  EE_IOP_OBJS += ACFLASH_irx.o ACFLASH_FS_irx.o
+  EE_TEMP_FILES += ACFLASH_irx.c ACFLASH_FS_irx.c
   EE_CFLAGS += -DCOH_SUPPORT -DDISABLE_LIBCGLUE_INIT
   IOPRP_BIN = irx/ioprp_coh.img
 else
