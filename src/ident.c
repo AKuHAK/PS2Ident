@@ -1376,7 +1376,7 @@ const char *GetModelIDDesc(unsigned short int ModelId)
     else if (ModelId == 0xd414) description = "SCPH-55000 GT";
     else if (ModelId == 0xd415) description = "SCPH-50009 SS";
     else if (ModelId == 0xd416) description = "SCPH-50003 AQ";
- /* else if (ModelId == 0xd417) description = "SCPH-55005 GT/N ???"; */
+    else if (ModelId == 0xd417) description = "SCPH-55005 GT/N ???";
     else if (ModelId == 0xd418) description = "SCPH-55006 GT";
  /* else if (ModelId == 0xd419) description = "SCPH-55007 GT ???"; */
     else if (ModelId == 0xd41a) description = "SCPH-50008 SS";
