@@ -835,6 +835,7 @@ const char *GetBOOTROMDesc(const char *extinfo, const char *romver, const char *
     else if (strcmp(combined, "20010704-160658C") == 0) description = "B10050";
     else if (strcmp(combined, "20010704-160707C") == 0) description = "B20050";
     else if (strcmp(combined, "20010730-223219C") == 0) description = "B40050";
+    else if (strcmp(combined, "20011004-175812C") == 0) description = "B00060";
     else if (strcmp(combined, "20011004-175827C") == 0) description = "B10060";
     else if (strcmp(combined, "20011004-175839C") == 0) description = "B20060";
     else if (strcmp(combined, "20020207-164243C") == 0) description = "B10070";
