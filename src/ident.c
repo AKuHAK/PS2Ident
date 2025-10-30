@@ -824,8 +824,8 @@ const char *GetBOOTROMDesc(const char *extinfo, const char *romver, const char *
     else if (strcmp(combined, "20000902-234318C") == 0) description = "B10020)";
     else if (strcmp(combined, "20000902-234321C") == 0) description = "B20020";
     else if (strcmp(combined, "20000902-234323D") == 0) description = "B21020 (Not confirmed)";
-    else if (strcmp(combined, "20001027-185015C") == 0) description = "Unknown chip";
-    else if (strcmp(combined, "20001027-191435C") == 0) description = "B00012";
+    else if (strcmp(combined, "20001027-185015C") == 0) description = "B00012 (split chip)";
+    else if (strcmp(combined, "20001027-191435C") == 0) description = "B00012 (combined chip)";
     else if (strcmp(combined, "20001228-190952C") == 0) description = "B10030 (Not confirmed)";
     else if (strcmp(combined, "20001228-234538C") == 0) description = "B20030";
     else if (strcmp(combined, "20010118-210306C") == 0) description = "B00030";
