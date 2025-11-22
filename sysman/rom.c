@@ -176,6 +176,14 @@ int ROMGetHardwareInfo(t_SysmanHardwareInfo *hwinfo)
 
     DEBUG_PRINTF("DVD ROM real size: %u (DEV1: %lu)\n", size, hwinfo->DVD_ROM.size);
 
+    /* Arcade BOOTROM is 2Mb in size, hardcode it */
+    int fd;
+    if ((fd = open("rom0:ACDEV", O_RDONLY)) >= 0)
+    {
+        close(fd);
+        hwinfo->BOOT_ROM.size = 0x200000;
+    }
+
     return 0;
 }
 
