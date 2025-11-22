@@ -99,17 +99,17 @@ static void SystemInitThread(struct SystemInitParams *SystemInitParams)
     id = SifExecModuleBuffer(PS2DEV9_irx, size_PS2DEV9_irx, 0, NULL, &ret);
     DEBUG_PRINTF("DEV9 id:%d ret:%d\n", id, ret);
 
-#ifdef COH_SUPPORT
-    id = SifLoadStartModule("rom0:ACDEV", 0, NULL, &ret); // Namco system 2x6 has no dvdplayer chip. instead, `ACDEV` registers a flash memory on the arcade board as `rom1:`
+    // Namco system 2x6 has no dvdplayer chip. instead, `ACDEV` registers a flash memory on the arcade board as `rom1:`
+    id = SifLoadStartModule("rom0:ACDEV", 0, NULL, &ret);
     DEBUG_PRINTF("rom0:ACDEV id:%d ret:%d\n", id, ret);
-#else
+    if (id < 0)
+        DEBUG_PRINTF("Failed to load rom0:ACDEV id:%d\n", id);
     id = SifLoadModule("rom0:ADDDRV", 0, NULL);
     if (id < 0)
         DEBUG_PRINTF("Failed to load rom0:ADDDRV id:%d\n", id);
     id = SifLoadModule("rom0:ADDROM2", 0, NULL);
     if (id < 0)
         DEBUG_PRINTF("Failed to load rom0:ADDROM2 id:%d\n", id);
-#endif
     // Initialize PlayStation Driver (PS1DRV)
     PS1DRVInit();
 
@@ -230,11 +230,6 @@ int main(int argc, char *argv[])
     {
     };
 
-#ifdef COH_SUPPORT
-    id = SifLoadStartModule("rom0:CDVDFSV", 0, NULL, &ret);
-    DEBUG_PRINTF("rom0:CDVDFSV id:%d ret:%d\n", id, ret);
-#endif
-
     SifInitRpc(0);
     SifInitIopHeap();
     SifLoadFileInit();
@@ -321,17 +316,16 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-#ifdef DISABLE_LIBCGLUE_INIT
-// void _libcglue_timezone_update() {}
-// DISABLE_PATCHED_FUNCTIONS();
-// DISABLE_EXTRA_TIMERS_FUNCTIONS();
-// PS2_DISABLE_AUTOSTART_PTHREAD();
-void _libcglue_init()
+#ifdef COH_SUPPORT
+void _ps2sdk_memory_init()
 {
-    sio_puts("_libcglue_init overriden\n");
-}
-void _libcglue_deinit()
-{
-    sio_puts("_libcglue_deinit overriden\n");
+    int ret = 0;
+    while (!SifIopRebootBuffer(IOPRP_img, size_IOPRP_img))
+        ;
+    while (!SifIopSync())
+        ;
+
+    int id = SifLoadStartModule("rom0:CDVDFSV", 0, NULL, &ret);
+    DEBUG_PRINTF("rom0:CDVDFSV id:%d ret:%d\n", id, ret);
 }
 #endif
