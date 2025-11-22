@@ -750,7 +750,7 @@ static struct UIMenuItem EEGSMenuItems[] = {
     {MITEM_TAB},
     {MITEM_VALUE, EEGS_ID_EE_RAM_SIZE, MITEM_FLAG_READONLY, MITEM_FORMAT_UDEC},
     {MITEM_SPACE},
-    {MITEM_LABEL, 0, 0, 0, 0, 0, 0, SYS_UI_LBL_UNIT_BYTES},
+    {MITEM_LABEL, 0, 0, 0, 0, 0, 0, SYS_UI_LBL_UNIT_MB},
     {MITEM_BREAK},
 
     {MITEM_BREAK},
@@ -805,7 +805,7 @@ static struct UIMenuItem IOPSPU2MenuItems[] = {
     {MITEM_TAB},
     {MITEM_VALUE, IOPSPU2_ID_IOP_RAM_SIZE, MITEM_FLAG_READONLY, MITEM_FORMAT_UDEC, 0},
     {MITEM_SPACE},
-    {MITEM_LABEL, 0, 0, 0, 0, 0, 0, SYS_UI_LBL_UNIT_BYTES},
+    {MITEM_LABEL, 0, 0, 0, 0, 0, 0, SYS_UI_LBL_UNIT_MB},
     {MITEM_BREAK},
 
     {MITEM_BREAK},
@@ -1660,7 +1660,7 @@ static void LoadEEGSInformation(const struct SystemInformation *SystemInformatio
     UISetValue(&EEGSReportMenu, EEGS_ID_EE_FPU_REV_MINOR, SystemInformation->mainboard.ee.FPURevision & 0xF);
     UISetValue(&EEGSReportMenu, EEGS_ID_EE_ICACHE_SIZE, CalculateCPUCacheSize(SystemInformation->mainboard.ee.ICacheSize) / 1024);
     UISetValue(&EEGSReportMenu, EEGS_ID_EE_DCACHE_SIZE, CalculateCPUCacheSize(SystemInformation->mainboard.ee.DCacheSize) / 1024);
-    UISetValue(&EEGSReportMenu, EEGS_ID_EE_RAM_SIZE, SystemInformation->mainboard.ee.RAMSize);
+    UISetValue(&EEGSReportMenu, EEGS_ID_EE_RAM_SIZE, SystemInformation->mainboard.ee.RAMSize / (1024 * 1024));
 
     // GS
     UISetValue(&EEGSReportMenu, EEGS_ID_GS_REV_MAJOR, SystemInformation->mainboard.gs.revision >> 4);
@@ -1683,7 +1683,7 @@ static void LoadIOPSPU2Information(const struct SystemInformation *SystemInforma
     UISetValue(&SummaryMenu, SUM_IOPSPU2_ID_IOP_REV_MINOR, SystemInformation->mainboard.iop.revision & 0xF);
     UISetString(&SummaryMenu, SUM_IOPSPU2_ID_IOP_NAME, GetIOPChipDesc(SystemInformation->mainboard.iop.revision, SystemInformation->mainboard.ee.revision));
 
-    UISetValue(&IOPSPU2ReportMenu, IOPSPU2_ID_IOP_RAM_SIZE, SystemInformation->mainboard.iop.RAMSize);
+    UISetValue(&IOPSPU2ReportMenu, IOPSPU2_ID_IOP_RAM_SIZE, SystemInformation->mainboard.iop.RAMSize / (1024 * 1024));
 
     // SPU2
     UISetValue(&IOPSPU2ReportMenu, IOPSPU2_ID_SPU2_REV, SystemInformation->mainboard.spu2.revision);

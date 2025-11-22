@@ -1823,7 +1823,7 @@ int WriteSystemInformation(FILE *stream, const struct SystemInformation *SystemI
                     "    FPU revision:        %u.%u\r\n"
                     "    ICache size:         0x%02x (%u KB)\r\n"
                     "    DCache size:         0x%02x (%u KB)\r\n"
-                    "    RAM size:            %u bytes\r\n"
+                    "    RAM size:            %u MB\r\n"
                     "    GS revision:         %u.%02u (%s)\r\n"
                     "    GS ID:               0x%02x\r\n",
             SystemInformation->mainboard.ee.implementation, SystemInformation->mainboard.ee.revision >> 4, SystemInformation->mainboard.ee.revision & 0xF, GetEEChipDesc(SystemInformation->mainboard.ee.revision & 0xFF, SystemInformation->mainboard.gs.revision & 0xFF),
@@ -1831,7 +1831,7 @@ int WriteSystemInformation(FILE *stream, const struct SystemInformation *SystemI
             SystemInformation->mainboard.ee.FPUImplementation, SystemInformation->mainboard.ee.FPURevision >> 4, SystemInformation->mainboard.ee.FPURevision & 0xF,
             SystemInformation->mainboard.ee.ICacheSize, CalculateCPUCacheSize(SystemInformation->mainboard.ee.ICacheSize) / 1024,
             SystemInformation->mainboard.ee.DCacheSize, CalculateCPUCacheSize(SystemInformation->mainboard.ee.DCacheSize) / 1024,
-            SystemInformation->mainboard.ee.RAMSize,
+            SystemInformation->mainboard.ee.RAMSize / (1024 * 1024),
             SystemInformation->mainboard.gs.revision >> 4, SystemInformation->mainboard.gs.revision & 0xF,
             GetGSChipDesc(SystemInformation->mainboard.gs.revision & 0xFF),
             SystemInformation->mainboard.gs.id);
@@ -1839,11 +1839,11 @@ int WriteSystemInformation(FILE *stream, const struct SystemInformation *SystemI
     fprintf(stream, "IOP:\r\n"
                     "    Implementation:      0x%02x\r\n"
                     "    Revision:            %u.%u (%s)\r\n"
-                    "    RAM size:            %u bytes\r\n"
+                    "    RAM size:            %u MB\r\n"
                     "    SSBUS I/F revision:  %u.%u (%s)\r\n",
             SystemInformation->mainboard.iop.revision >> 8,
             (SystemInformation->mainboard.iop.revision & 0xFF) >> 4, SystemInformation->mainboard.iop.revision & 0xF, GetIOPChipDesc(SystemInformation->mainboard.iop.revision, SystemInformation->mainboard.ee.revision),
-            SystemInformation->mainboard.iop.RAMSize,
+            SystemInformation->mainboard.iop.RAMSize / (1024 * 1024),
             SystemInformation->mainboard.ssbus.revision >> 4, SystemInformation->mainboard.ssbus.revision & 0xF,
             GetSSBUSIFDesc(SystemInformation->mainboard.ssbus.revision, SystemInformation->mainboard.ee.revision));
 
