@@ -186,6 +186,17 @@ int GetPeripheralInformation(struct SystemInformation *SystemInformation)
         // Get model name
         strncpy(SystemInformation->mainboard.ModelName, ModelNameGet(), sizeof(SystemInformation->mainboard.ModelName) - 1);
         SystemInformation->mainboard.ModelName[sizeof(SystemInformation->mainboard.ModelName) - 1] = '\0';
+        if (SystemInformation->mainboard.ModelName[0] == 0xFF)
+        {
+            SystemInformation->mainboard.status |= PS2IDB_STAT_ERR_MNAME;
+            SystemInformation->mainboard.ModelName[0] = '\0';
+#ifdef COH_SUPPORT
+            // Namco System 246/256 arcade boards have no model name stored. Use "System 256" as the model name.
+            strncpy(SystemInformation->mainboard.ModelName, "System 256", sizeof(SystemInformation->mainboard.ModelName) - 1);
+            SystemInformation->mainboard.ModelName[sizeof(SystemInformation->mainboard.ModelName) - 1] = '\0';
+            SystemInformation->mainboard.status &= ~PS2IDB_STAT_ERR_MNAME; // Clear the error status since we have a valid name now.
+#endif
+        }
     }
     else
     {
@@ -226,9 +237,23 @@ int GetPeripheralInformation(struct SystemInformation *SystemInformation)
         DEBUG_PRINTF("Failed to read console ID. Stat: %x\n", result);
         SystemInformation->mainboard.status |= PS2IDB_STAT_ERR_CONSOLEID;
     }
+    if (SystemInformation->ConsoleID[0] == 0xFF && SystemInformation->ConsoleID[1] == 0xFF && SystemInformation->ConsoleID[2] == 0xFF &&
+        SystemInformation->ConsoleID[3] == 0xFF && SystemInformation->ConsoleID[4] == 0xFF && SystemInformation->ConsoleID[5] == 0xFF &&
+        SystemInformation->ConsoleID[6] == 0xFF && SystemInformation->ConsoleID[7] == 0xFF)
+    {
+        DEBUG_PRINTF("Console ID is all 0xFF.\n");
+        SystemInformation->mainboard.status |= PS2IDB_STAT_ERR_CONSOLEID;
+    }
     if (sceCdRI(SystemInformation->iLinkID, &result) == 0 || (result & 0x80))
     {
         DEBUG_PRINTF("Failed to read i.Link ID. Stat: %x\n", result);
+        SystemInformation->mainboard.status |= PS2IDB_STAT_ERR_ILINKID;
+    }
+    if (SystemInformation->iLinkID[0] == 0xFF && SystemInformation->iLinkID[1] == 0xFF && SystemInformation->iLinkID[2] == 0xFF &&
+        SystemInformation->iLinkID[3] == 0xFF && SystemInformation->iLinkID[4] == 0xFF && SystemInformation->iLinkID[5] == 0xFF &&
+        SystemInformation->iLinkID[6] == 0xFF && SystemInformation->iLinkID[7] == 0xFF)
+    {
+        DEBUG_PRINTF("i.Link ID is all 0xFF.\n");
         SystemInformation->mainboard.status |= PS2IDB_STAT_ERR_ILINKID;
     }
     if (SystemInformation->mainboard.MECHACONVersion[1] >= 5)
@@ -1565,6 +1590,9 @@ const char *GetADD010Desc(unsigned short int id)
         case 0x0801:
             description = "AB";
             break;
+        case 0x0809:
+            description = "C (Arcade)";
+            break;
         case 0x080C:
             description = "DEX B (Old)";
             break;
@@ -1603,6 +1631,9 @@ const char *GetADD010Desc(unsigned short int id)
             break;
         case 0xBC2B:
             description = "Slim";
+            break;
+        case 0xFFFF:
+            description = "Not Present";
             break;
         default:
             description = "Sticker missing";

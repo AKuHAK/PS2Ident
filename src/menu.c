@@ -1258,12 +1258,15 @@ static int DumpSystemROMScreen(const struct SystemInformation *SystemInformation
             u32 serial;
 
             serial = ((u32)SystemInformation->ConsoleID[6]) << 16 | ((u32)SystemInformation->ConsoleID[5]) << 8 | ((u32)SystemInformation->ConsoleID[4]);
-            sprintf(&DumpPath[strlen(DumpPath)], "/%s_%07u", SystemInformation->mainboard.ModelName, serial);
+            if (!(SystemInformation->mainboard.status & PS2IDB_STAT_ERR_MNAME))
+                sprintf(&DumpPath[strlen(DumpPath)], "/%s_%07u", SystemInformation->mainboard.ModelName, serial);
+            else
+                sprintf(&DumpPath[strlen(DumpPath)], "/unknown_%07u", serial);
         }
-        else
-        {
+        else if (!(SystemInformation->mainboard.status & PS2IDB_STAT_ERR_MNAME))
             sprintf(&DumpPath[strlen(DumpPath)], "/%s_noserial", SystemInformation->mainboard.ModelName);
-        }
+        else
+            sprintf(&DumpPath[strlen(DumpPath)], "/unknown_noserial");
 
         DisplayFlashStatusUpdate(SYS_UI_MSG_PLEASE_WAIT);
 
@@ -1948,6 +1951,9 @@ static int DumpSystemROM(const char *path, const struct SystemInformation *Syste
     FILE *logfile;
     struct DumpingStatus DumpingStatus[DUMP_REGION_COUNT];
     unsigned char done;
+    const char *ModelNameTemp;
+
+    done = 0;
 
     // Loop through each element of the array and initialize to zero values
     for (i = 0; i < DUMP_REGION_COUNT; i++)
@@ -1955,17 +1961,21 @@ static int DumpSystemROM(const char *path, const struct SystemInformation *Syste
         DumpingStatus[i].progress = 0.0f; // Initialize progress to 0.0
         DumpingStatus[i].status   = 0;    // Initialize status to "In progress"
     }
+    if (SystemInformation->mainboard.status & PS2IDB_STAT_ERR_MNAME)
+        ModelNameTemp = "Unknown";
+    else
+        ModelNameTemp = SystemInformation->mainboard.ModelName;
 
     // Calculate the lengths of various parts of the filenames used below.
     PathLength   = strlen(path);
-    ModelNameLen = strlen(SystemInformation->mainboard.ModelName);
+    ModelNameLen = strlen(ModelNameTemp);
 
     filename     = malloc(PathLength + ModelNameLen + 32);
 
 #ifndef DSNET_HOST_SUPPORT
-    sprintf(filename, "%s/%s_specs.txt", path, SystemInformation->mainboard.ModelName);
+    sprintf(filename, "%s/%s_specs.txt", path, ModelNameTemp);
 #else
-    sprintf(filename, "%s%s_specs.txt", path, SystemInformation->mainboard.ModelName);
+    sprintf(filename, "%s%s_specs.txt", path, ModelNameTemp);
 #endif
     if ((logfile = fopen(filename, "wb")) != NULL)
     {
@@ -2007,9 +2017,9 @@ static int DumpSystemROM(const char *path, const struct SystemInformation *Syste
     //     }
 
 #ifndef DSNET_HOST_SUPPORT
-    sprintf(filename, "%s/%s.MEC", path, SystemInformation->mainboard.ModelName);
+    sprintf(filename, "%s/%s.MEC", path, ModelNameTemp);
 #else
-    sprintf(filename, "%s%s.MEC", path, SystemInformation->mainboard.ModelName);
+    sprintf(filename, "%s%s.MEC", path, ModelNameTemp);
 #endif
     if ((result = DumpMECHACON_VERSION(filename, SystemInformation)) == 0)
         DEBUG_PRINTF("done!\n");
@@ -2017,9 +2027,9 @@ static int DumpSystemROM(const char *path, const struct SystemInformation *Syste
         DEBUG_PRINTF("failed!\n");
 
 #ifndef DSNET_HOST_SUPPORT
-    sprintf(filename, "%s/%s.NVM", path, SystemInformation->mainboard.ModelName);
+    sprintf(filename, "%s/%s.NVM", path, ModelNameTemp);
 #else
-    sprintf(filename, "%s%s.NVM", path, SystemInformation->mainboard.ModelName);
+    sprintf(filename, "%s%s.NVM", path, ModelNameTemp);
 #endif
     if ((result = DumpMECHACON_EEPROM(filename)) == 0)
     {
@@ -2039,9 +2049,9 @@ static int DumpSystemROM(const char *path, const struct SystemInformation *Syste
         DEBUG_PRINTF("Dumping DVD ROM at %u, %u bytes...", SystemInformation->mainboard.DVD_ROM.StartAddress, SystemInformation->mainboard.DVD_ROM.size);
 
 #ifndef DSNET_HOST_SUPPORT
-        sprintf(filename, "%s/%s.ROM1", path, SystemInformation->mainboard.ModelName);
+        sprintf(filename, "%s/%s.ROM1", path, ModelNameTemp);
 #else
-        sprintf(filename, "%s%s.ROM1", path, SystemInformation->mainboard.ModelName);
+        sprintf(filename, "%s%s.ROM1", path, ModelNameTemp);
 #endif
         if ((result = DumpRom(filename, SystemInformation, DumpingStatus, DUMP_REGION_DVD_ROM)) == 0)
         {
@@ -2058,9 +2068,9 @@ static int DumpSystemROM(const char *path, const struct SystemInformation *Syste
         DEBUG_PRINTF("Dumping Boot ROM at %u, %u bytes...", SystemInformation->mainboard.BOOT_ROM.StartAddress, SystemInformation->mainboard.BOOT_ROM.size);
 
 #ifndef DSNET_HOST_SUPPORT
-        sprintf(filename, "%s/%s.BIN", path, SystemInformation->mainboard.ModelName);
+        sprintf(filename, "%s/%s.BIN", path, ModelNameTemp);
 #else
-        sprintf(filename, "%s%s.BIN", path, SystemInformation->mainboard.ModelName);
+        sprintf(filename, "%s%s.BIN", path, ModelNameTemp);
 #endif
         if ((result = DumpRom(filename, SystemInformation, DumpingStatus, DUMP_REGION_BOOT_ROM)) == 0)
         {
