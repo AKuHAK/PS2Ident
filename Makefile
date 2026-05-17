@@ -37,6 +37,7 @@ ifeq ($(HEADLESS),1)
   EE_CFLAGS += -DHEADLESS
   DSNET_HOST_SUPPORT = 1
   EE_SIO = 1
+  DEBUG = 1
 endif
 
 ifeq ($(DSNET_HOST_SUPPORT),1)

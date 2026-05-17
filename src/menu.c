@@ -1943,10 +1943,9 @@ static int DumpSystemROM(const char *path, const struct SystemInformation *Syste
 {
     char *filename;
     unsigned int PathLength, ModelNameLen;
-    int result, PadStatus, i;
+    int result, i;
     FILE *logfile;
     struct DumpingStatus DumpingStatus[DUMP_REGION_COUNT];
-    unsigned char done;
 
     // Loop through each element of the array and initialize to zero values
     for (i = 0; i < DUMP_REGION_COUNT; i++)
@@ -2079,22 +2078,22 @@ static int DumpSystemROM(const char *path, const struct SystemInformation *Syste
 
     free(filename);
 #ifndef HEADLESS
-    done = 0;
-    while (!done)
     {
-        RedrawDumpingScreen(SystemInformation, DumpingStatus);
-        // Draw the legend.
-        DrawButtonLegend(&UIDrawGlobal, &PadLayoutTexture, CancelButton == PAD_CROSS ? BUTTON_TYPE_CROSS : BUTTON_TYPE_CIRCLE, 50, 404, 1);
-        FontPrintf(&UIDrawGlobal, 75, 404, 1, 1.0f, GS_WHITE_FONT, GetUILabel(SYS_UI_LBL_RETURN_TO_MAIN));
+        int PadStatus;
+        unsigned char done = 0;
+        while (!done)
+        {
+            RedrawDumpingScreen(SystemInformation, DumpingStatus);
+            // Draw the legend.
+            DrawButtonLegend(&UIDrawGlobal, &PadLayoutTexture, CancelButton == PAD_CROSS ? BUTTON_TYPE_CROSS : BUTTON_TYPE_CIRCLE, 50, 404, 1);
+            FontPrintf(&UIDrawGlobal, 75, 404, 1, 1.0f, GS_WHITE_FONT, GetUILabel(SYS_UI_LBL_RETURN_TO_MAIN));
 
-        PadStatus = ReadCombinedPadStatus();
+            PadStatus = ReadCombinedPadStatus();
 
-        if (PadStatus & CancelButton)
-            done = 1;
+            if (PadStatus & CancelButton)
+                done = 1;
+        }
     }
-#else
-    (void)done;
-    (void)PadStatus;
 #endif
 
     return result;

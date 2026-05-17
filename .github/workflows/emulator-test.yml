@@ -9,6 +9,8 @@ jobs:
     name: Build headless ELF
     runs-on: ubuntu-latest
     container: ghcr.io/ps2homebrew/ps2homebrew:main
+    permissions:
+      contents: read
     steps:
       - name: Install dependencies
         run: |
@@ -38,6 +40,7 @@ jobs:
     name: Headless emulator test (Play!)
     needs: build-headless
     runs-on: ubuntu-latest
+    permissions: {}
     steps:
       - name: Download headless ELF
         uses: actions/download-artifact@v4
