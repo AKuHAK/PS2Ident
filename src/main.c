@@ -202,9 +202,11 @@ int main(int argc, char *argv[])
     }
 
     SifInitRpc(0);
+#ifndef HEADLESS
     while (!SifIopRebootBuffer(IOPRP_img, size_IOPRP_img))
     {
     };
+#endif
     memset(&SystemInformation, 0, sizeof(SystemInformation));
 
     /* Go gather some information from the EE's peripherals while the IOP reset. */
@@ -228,9 +230,11 @@ int main(int argc, char *argv[])
     AddIntcHandler(kINTC_VBLANK_START, &VBlankStartHandler, 0);
     EnableIntc(kINTC_VBLANK_START);
 
+#ifndef HEADLESS
     while (!SifIopSync())
     {
     };
+#endif
 
 #ifdef COH_SUPPORT
     id = SifLoadStartModule("rom0:CDVDFSV", 0, NULL, &ret);
