@@ -15,7 +15,7 @@
 #include "system.h"
 #include "pad.h"
 #include "graphics.h"
-#include "font.h"
+#include "include/font.h"
 #include "UI.h"
 
 #include "OSDInit.h"
