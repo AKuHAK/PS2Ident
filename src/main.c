@@ -196,10 +196,12 @@ int main(int argc, char *argv[])
     int id, ret;
 
     //	chdir("mass:/PS2Ident/");
+#ifndef HEADLESS
     if (argc < 1 || GetBootDeviceID() == BOOT_DEVICE_UNKNOWN)
     {
         Exit(-1);
     }
+#endif
 
     SifInitRpc(0);
 #ifndef HEADLESS

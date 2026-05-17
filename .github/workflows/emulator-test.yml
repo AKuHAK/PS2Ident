@@ -90,6 +90,9 @@ jobs:
           # Play! maps host0: to ~/.local/share/Play Data Files/vfs/host/
           HOST_DIR="$HOME/.local/share/Play Data Files/vfs/host"
 
+          # Pre-create the host0: virtual directory so file writes succeed.
+          mkdir -p "$HOST_DIR"
+
           echo "=== Starting Play! headless test ==="
           echo "ELF: $ELF_PATH"
           echo "Play! binary: $PLAY_BIN"
@@ -108,10 +111,13 @@ jobs:
           # Collect dump files written to host0: (~/.local/share/Play Data Files/vfs/host/)
           if [ -d "$HOST_DIR" ]; then
             find "$HOST_DIR" \( \
-              -name "*.txt" -o -name "*.NVM" -o -name "*.BIN" \
+              -name "*.txt" -o -name "*.log" -o -name "*.NVM" -o -name "*.BIN" \
               -o -name "*.ROM1" -o -name "*.MEC" \
             \) -exec cp -v {} dump_output/ \; 2>/dev/null || true
           fi
+
+          echo "=== host0: directory listing ==="
+          ls -lhR "$HOST_DIR" 2>/dev/null || echo "(host0: dir not present)"
 
           echo "=== Dump output contents ==="
           ls -lh dump_output/

@@ -2102,9 +2102,28 @@ static int DumpSystemROM(const char *path, const struct SystemInformation *Syste
 #ifdef HEADLESS
 int RunHeadlessDump(const struct SystemInformation *SystemInformation)
 {
+    FILE *log;
+    int result;
+
     printf("PS2Ident " PS2IDENT_VERSION " headless dump starting...\n");
+    fflush(stdout);
+
+    /* Write a diagnostic log to host0: so CI can capture it even if printf
+     * output is not relayed to the host process's stdout by the emulator. */
+    log = fopen("host0:PS2Ident_headless.txt", "wb");
+    if (log != NULL)
+    {
+        fprintf(log, "PS2Ident " PS2IDENT_VERSION " headless dump starting...\n");
+        WriteSystemInformation(log, SystemInformation);
+        fclose(log);
+    }
+
     WriteSystemInformation(stdout, SystemInformation);
     fflush(stdout);
-    return DumpSystemROM("host0:", SystemInformation);
+
+    result = DumpSystemROM("host0:", SystemInformation);
+    printf("DumpSystemROM result: %d\n", result);
+    fflush(stdout);
+    return result;
 }
 #endif
