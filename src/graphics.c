@@ -5,8 +5,8 @@
 #include <png.h>
 
 #include "main.h"
-#include "font.h"
 #include "graphics.h"
+#include "include/font.h"
 
 extern int VBlankStartSema;
 static GS_GIF_TAG *LastGIFPacket = NULL;
