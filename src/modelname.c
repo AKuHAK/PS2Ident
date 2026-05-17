@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <kernel.h>
 #include <fcntl.h>
+#include <unistd.h>
 #include <sifcmd.h>
 #include <libcdvd.h>
 #include "libcdvd_add.h"

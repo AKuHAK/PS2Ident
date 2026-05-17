@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <kernel.h>
 #include <fcntl.h>
+#include <unistd.h>
 #include <sifcmd.h>
 #include <libmc.h>
 // #include <ps2sdkapi.h>

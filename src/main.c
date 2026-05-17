@@ -16,6 +16,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
+#include <unistd.h>
 // #include <ps2sdkapi.h>
 // #include <rom0_info.h>
 #include <osd_config.h>
