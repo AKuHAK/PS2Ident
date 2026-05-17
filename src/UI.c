@@ -24,8 +24,6 @@ extern unsigned char font_Default[];
 extern unsigned int size_font_Default;
 static const char DefaultFontFilename[] = "font.ttf";
 
-extern int errno __attribute__((section("data")));
-
 struct UIDrawGlobal UIDrawGlobal;
 GS_IMAGE BackgroundTexture;
 struct ClutImage PadLayoutTexture;

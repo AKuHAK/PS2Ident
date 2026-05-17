@@ -64,13 +64,14 @@ extern void *_gp;
 static int LoadEROMDRV(void)
 {
     char eromdrv[] = "rom1:EROMDRV?";
-    int fd         = 0;
+    int fd         = -1;
 
     // Handle region-specific DVD Player of newer consoles.
     if (OSDGetDVDPlayerRegion(&eromdrv[12]) == 0 || (fd = open(eromdrv, O_RDONLY)) < 0)
         eromdrv[12] = '\0'; // Replace '?' with a NULL.
 
-    close(fd);
+    if (fd >= 0)
+        close(fd);
     DEBUG_PRINTF("EROMDRV: %s\n", eromdrv);
 
     return SifLoadModuleEncrypted(eromdrv, 0, NULL);
