@@ -11,14 +11,12 @@
 #ifdef DEBUG
 #include <sio.h>
 #include <stdio.h>
-#define DEBUG_MSG_BUF_SIZE 256
+#define DEBUG_MSG_BUF_SIZE 512
 #define DEBUG_PRINTF(args...) do { \
+    char _debug_msg_buf[DEBUG_MSG_BUF_SIZE]; \
     printf(args); \
-    do { \
-        char _debug_msg_buf[DEBUG_MSG_BUF_SIZE]; \
-        snprintf(_debug_msg_buf, sizeof(_debug_msg_buf), args); \
-        sio_puts(_debug_msg_buf); \
-    } while (0); \
+    snprintf(_debug_msg_buf, sizeof(_debug_msg_buf), args); \
+    sio_puts(_debug_msg_buf); \
 } while (0)
 #else
 #define DEBUG_PRINTF(args...)
