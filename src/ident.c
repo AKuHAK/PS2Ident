@@ -116,9 +116,10 @@ static u32 CalculateCRCOfROM(void *buffer1, void *buffer2, void *start, unsigned
 {
     u32 crc;
     unsigned int i, size = 0, prevSize;
-    void *pDestBuffer, *pSrcBuffer;
+    void *pDestBuffer;
+    unsigned char *pSrcBuffer;
 
-    for (i = 0, prevSize = size, crc = CRC32_INITIAL_CHECKSUM, pDestBuffer = buffer1, pSrcBuffer = start; i < length; i += size, pSrcBuffer += size)
+    for (i = 0, prevSize = size, crc = CRC32_INITIAL_CHECKSUM, pDestBuffer = buffer1, pSrcBuffer = (unsigned char *)start; i < length; i += size, pSrcBuffer += size)
     {
         size = length - i > MEM_IO_BLOCK_SIZE ? MEM_IO_BLOCK_SIZE : length - i;
 
