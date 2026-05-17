@@ -2078,6 +2078,7 @@ static int DumpSystemROM(const char *path, const struct SystemInformation *Syste
 #endif
 
     free(filename);
+#ifndef HEADLESS
     done = 0;
     while (!done)
     {
@@ -2091,6 +2092,20 @@ static int DumpSystemROM(const char *path, const struct SystemInformation *Syste
         if (PadStatus & CancelButton)
             done = 1;
     }
+#else
+    (void)done;
+    (void)PadStatus;
+#endif
 
     return result;
 }
+
+#ifdef HEADLESS
+int RunHeadlessDump(const struct SystemInformation *SystemInformation)
+{
+    printf("PS2Ident " PS2IDENT_VERSION " headless dump starting...\n");
+    WriteSystemInformation(stdout, SystemInformation);
+    fflush(stdout);
+    return DumpSystemROM("host0:", SystemInformation);
+}
+#endif

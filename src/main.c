@@ -298,6 +298,12 @@ int main(int argc, char *argv[])
 
     DEBUG_PRINTF("System init: Initializing RPCs.\n");
 
+#ifdef HEADLESS
+    DEBUG_PRINTF("Headless mode: dumping system information to host0:\n");
+    RunHeadlessDump(&SystemInformation);
+    printf("PS2Ident headless dump complete.\n");
+    fflush(stdout);
+#else
     PadInitPads();
     mcInit(MC_TYPE_XMC);
 
@@ -306,6 +312,7 @@ int main(int argc, char *argv[])
     MainMenu(&SystemInformation);
 
     PadDeinitPads();
+#endif
 
     DisableIntc(kINTC_VBLANK_START);
     RemoveIntcHandler(kINTC_VBLANK_START, 0);

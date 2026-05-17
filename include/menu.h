@@ -2,6 +2,9 @@
 struct SystemInformation;
 struct DumpingStatus;
 int MainMenu(const struct SystemInformation *SystemInformation);
+#ifdef HEADLESS
+int RunHeadlessDump(const struct SystemInformation *SystemInformation);
+#endif
 
 struct ProgressBarCoords
 {
