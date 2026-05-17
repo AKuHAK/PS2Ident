@@ -14,8 +14,8 @@
 #define DEBUG_MSG_BUF_SIZE 512
 #define DEBUG_PRINTF(args...) do { \
     char _debug_msg_buf[DEBUG_MSG_BUF_SIZE]; \
-    printf(args); \
     snprintf(_debug_msg_buf, sizeof(_debug_msg_buf), args); \
+    printf("%s", _debug_msg_buf); \
     sio_puts(_debug_msg_buf); \
 } while (0)
 #else
