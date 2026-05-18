@@ -14,12 +14,12 @@ IOP_LIBS =
 
 IOP_INCS +=
 IOP_CFLAGS  += -Wall -D_IOP -fno-builtin-printf
-IOP_LDFLAGS += -s
 
 all: $(IOP_BIN)
 
 clean:
-	rm -f $(IOP_BIN) $(IOP_OBJS)
+	rm -f $(IOP_BIN) $(IOP_BIN:.irx=.notiopmod.elf) $(IOP_BIN:.irx=.notiopmod.stripped.elf)
+	rm -rf $(IOP_OBJS_DIR)
 
 rebuild: clean all
 
@@ -28,4 +28,4 @@ run:
 
 
 include $(PS2SDK)/Defs.make
-include Rules.make
+include $(PS2SDK)/samples/Makefile.iopglobal

@@ -13,16 +13,14 @@ endif
 IOP_BIN  = sysman.irx
 IOP_OBJS = main.o iLink.o dev9.o usb.o spu2.o rom.o imports.o
 
-IOP_CFLAGS += -Wall -fno-builtin -G8192 -mgpopt
-IOP_LDFLAGS += -s
+IOP_CFLAGS += -Wall -fno-builtin
 IOP_INCS += -I../romdrv/include
 
 all: $(IOP_BIN)
 
 clean:
-	rm -rf $(IOP_BIN) $(IOP_OBJS) $(IOP_OBJS_DIR)
+	rm -rf $(IOP_BIN) $(IOP_OBJS_DIR) $(IOP_BIN:.irx=.notiopmod.elf) $(IOP_BIN:.irx=.notiopmod.stripped.elf)
 
 include $(PS2SDK)/samples/Makefile.pref
 include $(PS2SDK)/Defs.make
-# include $(PS2SDK)/samples/Makefile.iopglobal
-include Rules.make
+include $(PS2SDK)/samples/Makefile.iopglobal
