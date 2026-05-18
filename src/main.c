@@ -250,6 +250,20 @@ int main(int argc, char *argv[])
     sbv_patch_enable_lmb();
     sbv_patch_fileio();
 
+#ifdef HEADLESS
+    /* Very early host0: probe — written before any heavy init.
+     * If this file appears in the emulator's host dir, PS2Ident is running
+     * and host0: writes are functional. */
+    {
+        FILE *_early = fopen("host0:PS2Ident_probe.txt", "wb");
+        if (_early != NULL)
+        {
+            fprintf(_early, "PS2Ident HEADLESS: reached sbv_patch_fileio\n");
+            fclose(_early);
+        }
+    }
+#endif
+
     id = SifExecModuleBuffer(SIO2MAN_irx, size_SIO2MAN_irx, 0, NULL, &ret);
     DEBUG_PRINTF("SIO2MAN id:%d ret:%d\n", id, ret);
     id = SifExecModuleBuffer(MCMAN_irx, size_MCMAN_irx, 0, NULL, &ret);
@@ -299,9 +313,6 @@ int main(int argc, char *argv[])
     free(SysInitThreadStack);
     DEBUG_PRINTF("free done!\n");
 
-    SifLoadFileExit();
-    SifExitIopHeap();
-
     DEBUG_PRINTF("System init: Initializing RPCs.\n");
 
 #ifdef HEADLESS
@@ -309,7 +320,12 @@ int main(int argc, char *argv[])
     RunHeadlessDump(&SystemInformation);
     printf("PS2Ident headless dump complete.\n");
     fflush(stdout);
-#else
+#endif
+
+    SifLoadFileExit();
+    SifExitIopHeap();
+
+#ifndef HEADLESS
     PadInitPads();
     mcInit(MC_TYPE_XMC);
 
