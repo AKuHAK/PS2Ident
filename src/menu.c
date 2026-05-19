@@ -1943,10 +1943,9 @@ static int DumpSystemROM(const char *path, const struct SystemInformation *Syste
 {
     char *filename;
     unsigned int PathLength, ModelNameLen;
-    int result, PadStatus, i;
+    int result, i;
     FILE *logfile;
     struct DumpingStatus DumpingStatus[DUMP_REGION_COUNT];
-    unsigned char done;
 
     // Loop through each element of the array and initialize to zero values
     for (i = 0; i < DUMP_REGION_COUNT; i++)
@@ -2078,19 +2077,53 @@ static int DumpSystemROM(const char *path, const struct SystemInformation *Syste
 #endif
 
     free(filename);
-    done = 0;
-    while (!done)
+#ifndef HEADLESS
     {
-        RedrawDumpingScreen(SystemInformation, DumpingStatus);
-        // Draw the legend.
-        DrawButtonLegend(&UIDrawGlobal, &PadLayoutTexture, CancelButton == PAD_CROSS ? BUTTON_TYPE_CROSS : BUTTON_TYPE_CIRCLE, 50, 404, 1);
-        FontPrintf(&UIDrawGlobal, 75, 404, 1, 1.0f, GS_WHITE_FONT, GetUILabel(SYS_UI_LBL_RETURN_TO_MAIN));
+        int PadStatus;
+        unsigned char done = 0;
+        while (!done)
+        {
+            RedrawDumpingScreen(SystemInformation, DumpingStatus);
+            // Draw the legend.
+            DrawButtonLegend(&UIDrawGlobal, &PadLayoutTexture, CancelButton == PAD_CROSS ? BUTTON_TYPE_CROSS : BUTTON_TYPE_CIRCLE, 50, 404, 1);
+            FontPrintf(&UIDrawGlobal, 75, 404, 1, 1.0f, GS_WHITE_FONT, GetUILabel(SYS_UI_LBL_RETURN_TO_MAIN));
 
-        PadStatus = ReadCombinedPadStatus();
+            PadStatus = ReadCombinedPadStatus();
 
-        if (PadStatus & CancelButton)
-            done = 1;
+            if (PadStatus & CancelButton)
+                done = 1;
+        }
     }
+#endif
 
     return result;
 }
+
+#ifdef HEADLESS
+int RunHeadlessDump(const struct SystemInformation *SystemInformation)
+{
+    FILE *log;
+    int result;
+
+    printf("PS2Ident " PS2IDENT_VERSION " headless dump starting...\n");
+    fflush(stdout);
+
+    /* Write a diagnostic log to host0: so CI can capture it even if printf
+     * output is not relayed to the host process's stdout by the emulator. */
+    log = fopen("host0:PS2Ident_headless.txt", "wb");
+    if (log != NULL)
+    {
+        fprintf(log, "PS2Ident " PS2IDENT_VERSION " headless dump starting...\n");
+        WriteSystemInformation(log, SystemInformation);
+        fclose(log);
+    }
+
+    WriteSystemInformation(stdout, SystemInformation);
+    fflush(stdout);
+
+    result = DumpSystemROM("host0:", SystemInformation);
+    printf("DumpSystemROM result: %d\n", result);
+    fflush(stdout);
+    return result;
+}
+#endif

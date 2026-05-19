@@ -196,15 +196,19 @@ int main(int argc, char *argv[])
     int id, ret;
 
     //	chdir("mass:/PS2Ident/");
+#ifndef HEADLESS
     if (argc < 1 || GetBootDeviceID() == BOOT_DEVICE_UNKNOWN)
     {
         Exit(-1);
     }
+#endif
 
     SifInitRpc(0);
+#ifndef HEADLESS
     while (!SifIopRebootBuffer(IOPRP_img, size_IOPRP_img))
     {
     };
+#endif
     memset(&SystemInformation, 0, sizeof(SystemInformation));
 
     /* Go gather some information from the EE's peripherals while the IOP reset. */
@@ -228,9 +232,11 @@ int main(int argc, char *argv[])
     AddIntcHandler(kINTC_VBLANK_START, &VBlankStartHandler, 0);
     EnableIntc(kINTC_VBLANK_START);
 
+#ifndef HEADLESS
     while (!SifIopSync())
     {
     };
+#endif
 
 #ifdef COH_SUPPORT
     id = SifLoadStartModule("rom0:CDVDFSV", 0, NULL, &ret);
@@ -243,6 +249,25 @@ int main(int argc, char *argv[])
 
     sbv_patch_enable_lmb();
     sbv_patch_fileio();
+
+#ifdef HEADLESS
+    /* In headless/emulator mode skip all heavy IOP module loading, USB init,
+     * OSD init, and UI init.  Just dump the EE information that was already
+     * gathered and exit so the emulator test does not hang. */
+    DEBUG_PRINTF("Headless mode: dumping system information to host0:\n");
+    RunHeadlessDump(&SystemInformation);
+    printf("PS2Ident headless dump complete.\n");
+    fflush(stdout);
+
+    SifLoadFileExit();
+    SifExitIopHeap();
+    DisableIntc(kINTC_VBLANK_START);
+    RemoveIntcHandler(kINTC_VBLANK_START, 0);
+    DeleteSema(VBlankStartSema);
+    free(SysInitThreadStack);
+    SifExitRpc();
+    return 0;
+#endif
 
     id = SifExecModuleBuffer(SIO2MAN_irx, size_SIO2MAN_irx, 0, NULL, &ret);
     DEBUG_PRINTF("SIO2MAN id:%d ret:%d\n", id, ret);
@@ -293,11 +318,12 @@ int main(int argc, char *argv[])
     free(SysInitThreadStack);
     DEBUG_PRINTF("free done!\n");
 
+    DEBUG_PRINTF("System init: Initializing RPCs.\n");
+
     SifLoadFileExit();
     SifExitIopHeap();
 
-    DEBUG_PRINTF("System init: Initializing RPCs.\n");
-
+#ifndef HEADLESS
     PadInitPads();
     mcInit(MC_TYPE_XMC);
 
@@ -306,6 +332,7 @@ int main(int argc, char *argv[])
     MainMenu(&SystemInformation);
 
     PadDeinitPads();
+#endif
 
     DisableIntc(kINTC_VBLANK_START);
     RemoveIntcHandler(kINTC_VBLANK_START, 0);

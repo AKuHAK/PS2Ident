@@ -5,6 +5,8 @@ COH ?= 0
 
 EE_SIO ?= 0
 DISABLE_ILINK_DUMPING ?= 0
+#Enable to build a headless (no-UI) ELF that auto-dumps to host0: for emulator testing
+HEADLESS ?= 0
 
 EE_BIN = PS2Ident_np.elf
 EE_PACKED_BIN = PS2Ident.elf
@@ -30,6 +32,13 @@ EE_CFLAGS += $(EE_GPVAL) -Wno-missing-braces -O0 -g
 EE_TEMP_FILES = SIO2MAN_irx.c MCMAN_irx.c MCSERV_irx.c PADMAN_irx.c POWEROFF_irx.c PS2DEV9_irx.c USBD_irx.c  USBHDFSD_irx.c USBHDFSDFSV_irx.c SYSMAN_irx.c buttons.c devices.c background_img.c font_Default.c IOPRP_img.c
 
 EE_TEMP_FILES := $(EE_TEMP_FILES:%=$(EE_SRC_DIR)%)
+
+ifeq ($(HEADLESS),1)
+  EE_CFLAGS += -DHEADLESS
+  DSNET_HOST_SUPPORT = 1
+  EE_SIO = 1
+  DEBUG = 1
+endif
 
 ifeq ($(DSNET_HOST_SUPPORT),1)
   EE_CFLAGS += -DDSNET_HOST_SUPPORT
