@@ -48,7 +48,6 @@ jobs:
           name: PS2Ident-headless-${{ github.sha }}
 
       - name: Install system dependencies
-        # Добавлен pulseaudio на всякий случай, как запасной план для аудио
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
@@ -57,7 +56,7 @@ jobs:
             libxcb1 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 \
             libxcb-render-util0 libxcb-xinerama0 libxcb-xkb1 \
             libxkbcommon-x11-0 libdbus-1-3 libfontconfig1 \
-            libfreetype6 libpulse0 libstdc++6 libasound2t64 pulseaudio || true
+            libfreetype6 libpulse0 libstdc++6 || true
 
       - name: Download Play! emulator (latest master CI build)
         run: |
@@ -76,92 +75,76 @@ jobs:
           fi
           chmod +x "$PLAY_BIN"
           echo "PLAY_BIN=$PLAY_BIN" >> "$GITHUB_ENV"
-          echo "PLAY_DIR=$(dirname "$PLAY_BIN")" >> "$GITHUB_ENV"
 
       - name: Run emulator headless test
         run: |
           set -eu
           mkdir -p dump_output
           ELF_PATH="$PWD/PS2Ident.elf"
-
-          echo "=== 1. Настройка виртуального аудио (ALSA null sink) ==="
-          # Это предотвратит краш ALSA при отсутствии звуковой карты
-          cat << 'EOF' > ~/.asoundrc
-          pcm.!default {
-              type null
-          }
-          ctl.!default {
-              type null
-          }
-          EOF
-
-          echo "=== 2. Настройка портативного режима ==="
-          # Файл portable.txt заставит Play! использовать текущую папку
-          touch "$PLAY_DIR/portable.txt"
           
-          PLAY_DATA_DIR="$PLAY_DIR/Play Data Files"
+          # Default Play! directory on Linux
+          PLAY_DATA_DIR="$HOME/.local/share/Play Data Files"
           HOST_DIR="$PLAY_DATA_DIR/vfs/host"
           
-          # Создаем структуру папок заранее
+          echo "=== 1. Creating directories ==="
           mkdir -p "$HOST_DIR"
           mkdir -p "$PLAY_DATA_DIR/logs"
 
-          echo "=== 3. Генерация конфигурации Play! ==="
-          # Включаем логирование STDOUT/STDERR и внутренние принты эмулятора
+          echo "=== 2. Generating Play! Config.xml ==="
+          # Disabling audio output to fix ALSA missing card crash
+          # Enabling stdlogging to catch printf output
           cat << 'EOF' > "$PLAY_DATA_DIR/Config.xml"
           <?xml version="1.0" encoding="UTF-8"?>
-          <PlayConfig>
-              <Preference Name="iop.fileio.stdlogging" Value="true" />
-              <Preference Name="log.showprints" Value="true" />
-          </PlayConfig>
+          <Config>
+              <Preference Name="audio.enableoutput" Type="boolean" Value="false" />
+              <Preference Name="iop.fileio.stdlogging" Type="boolean" Value="true" />
+              <Preference Name="log.showprints" Type="boolean" Value="true" />
+          </Config>
           EOF
+          
+          echo "Config.xml generated at: $PLAY_DATA_DIR/Config.xml"
 
-          echo "=== 4. Запуск Play! (headless) ==="
-          # APPIMAGE_EXTRACT_AND_RUN=1 отключает зависимость от FUSE в CI
+          echo "=== 3. Starting Play! (headless) ==="
           APPIMAGE_EXTRACT_AND_RUN=1 \
             xvfb-run --auto-servernum --server-args="-screen 0 640x480x24" \
               timeout 120 "$PLAY_BIN" --elf "$ELF_PATH" > dump_output/emulator_output.log 2>&1 || true
 
-          echo "=== Сессия Play! завершена ==="
+          echo "=== Play! session ended ==="
 
-          echo "=== 5. Сбор логов и дампов ==="
-          # Копируем результаты stdout (ваши printf)
+          echo "=== 4. Collecting logs and dumps ==="
           if [ -f "$PLAY_DATA_DIR/ps2_stdout.txt" ]; then
             cp -v "$PLAY_DATA_DIR/ps2_stdout.txt" dump_output/
           fi
           
-          # Копируем результаты stderr
           if [ -f "$PLAY_DATA_DIR/ps2_stderr.txt" ]; then
             cp -v "$PLAY_DATA_DIR/ps2_stderr.txt" dump_output/
           fi
           
-          # Копируем логи самого эмулятора
           if [ -d "$PLAY_DATA_DIR/logs" ]; then
             cp -rv "$PLAY_DATA_DIR/logs" dump_output/play_logs || true
           fi
 
-          # Копируем любые файлы, сохраненные программой на host0:
           if [ -d "$HOST_DIR" ]; then
             find "$HOST_DIR" -type f -exec cp -v {} dump_output/ \; 2>/dev/null || true
           fi
 
-          echo "=== Содержимое папки дампов ==="
+          echo "=== Dump Directory Contents ==="
           ls -lh dump_output/
           echo ""
 
-          echo "=== ВЫВОД ПРОГРАММЫ (ps2_stdout.txt) ==="
+          echo "=== APP STDOUT (ps2_stdout.txt) ==="
           if [ -f "dump_output/ps2_stdout.txt" ]; then
             cat "dump_output/ps2_stdout.txt"
           else
-            echo "[Пусто / Файл не создан]"
+            echo "[Empty / File not created]"
           fi
           echo ""
 
-          echo "=== ОШИБКИ ПРОГРАММЫ (ps2_stderr.txt) ==="
+          echo "=== APP STDERR (ps2_stderr.txt) ==="
           if [ -f "dump_output/ps2_stderr.txt" ]; then
             cat "dump_output/ps2_stderr.txt"
           else
-            echo "[Пусто / Файл не создан]"
+            echo "[Empty / File not created]"
           fi
 
       - name: Upload dump artifacts
