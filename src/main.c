@@ -251,17 +251,22 @@ int main(int argc, char *argv[])
     sbv_patch_fileio();
 
 #ifdef HEADLESS
-    /* Very early host0: probe — written before any heavy init.
-     * If this file appears in the emulator's host dir, PS2Ident is running
-     * and host0: writes are functional. */
-    {
-        FILE *_early = fopen("host0:PS2Ident_probe.txt", "wb");
-        if (_early != NULL)
-        {
-            fprintf(_early, "PS2Ident HEADLESS: reached sbv_patch_fileio\n");
-            fclose(_early);
-        }
-    }
+    /* In headless/emulator mode skip all heavy IOP module loading, USB init,
+     * OSD init, and UI init.  Just dump the EE information that was already
+     * gathered and exit so the emulator test does not hang. */
+    DEBUG_PRINTF("Headless mode: dumping system information to host0:\n");
+    RunHeadlessDump(&SystemInformation);
+    printf("PS2Ident headless dump complete.\n");
+    fflush(stdout);
+
+    SifLoadFileExit();
+    SifExitIopHeap();
+    DisableIntc(kINTC_VBLANK_START);
+    RemoveIntcHandler(kINTC_VBLANK_START, 0);
+    DeleteSema(VBlankStartSema);
+    free(SysInitThreadStack);
+    SifExitRpc();
+    return 0;
 #endif
 
     id = SifExecModuleBuffer(SIO2MAN_irx, size_SIO2MAN_irx, 0, NULL, &ret);
@@ -314,13 +319,6 @@ int main(int argc, char *argv[])
     DEBUG_PRINTF("free done!\n");
 
     DEBUG_PRINTF("System init: Initializing RPCs.\n");
-
-#ifdef HEADLESS
-    DEBUG_PRINTF("Headless mode: dumping system information to host0:\n");
-    RunHeadlessDump(&SystemInformation);
-    printf("PS2Ident headless dump complete.\n");
-    fflush(stdout);
-#endif
 
     SifLoadFileExit();
     SifExitIopHeap();
