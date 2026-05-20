@@ -93,7 +93,7 @@ jobs:
           echo "=== 2. Generating Play! Config.xml ==="
           # Disabling audio output to fix ALSA missing card crash
           # Enabling stdlogging to catch printf output
-          cat << 'EOF' > "$PLAY_DATA_DIR/Config.xml"
+          cat << 'EOF' > "$PLAY_DATA_DIR/config.xml"
           <?xml version="1.0" encoding="UTF-8"?>
           <Config>
               <Preference Name="audio.enableoutput" Type="boolean" Value="false" />
@@ -105,9 +105,19 @@ jobs:
           echo "Config.xml generated at: $PLAY_DATA_DIR/Config.xml"
 
           echo "=== 3. Starting Play! (headless) ==="
+          set +e
           APPIMAGE_EXTRACT_AND_RUN=1 \
             xvfb-run --auto-servernum --server-args="-screen 0 640x480x24" \
-              timeout 120 "$PLAY_BIN" --elf "$ELF_PATH" > dump_output/emulator_output.log 2>&1 || true
+              timeout 120 "$PLAY_BIN" --elf "$ELF_PATH" > dump_output/emulator_output.log 2>&1
+          EMU_EXIT=$?
+          set -e
+          
+          echo "Emulator exit code: $EMU_EXIT"
+          
+          if [ $EMU_EXIT -ne 0 ] && [ $EMU_EXIT -ne 124 ]; then
+            echo "::error::Play! exited with unexpected code $EMU_EXIT"
+            exit $EMU_EXIT
+          fi
 
           echo "=== Play! session ended ==="
 
