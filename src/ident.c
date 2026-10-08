@@ -961,14 +961,14 @@ const char *GetMECHACONChipDesc(unsigned int revision)
 
     switch (revision)
     {
-        case 0x010200:
-            description = "CXP101064-605R";
-            break;
         case 0x010300:
             description = "CXP101064-602R"; // DTL-T10000 and retail models, Japan region locked
             break;
+        case 0x010700:
+            description = "CXP102064-003R (Not confirmed)";
+            break;
         case 0x010900:
-            description = "CXP102064-751R"; // only DTL-T10000
+            description = "CXP102064-751R"; // DTL-T10000H, DTL-T15000
             break;
         case 0x02040A:
             description = "CXP102064-651R"; // only Arcade machines
@@ -998,23 +998,23 @@ const char *GetMECHACONChipDesc(unsigned int revision)
             description = "CXP102064-705R/-752R"; // DTL-H3000x, DTL-H3010x, DTL-T10000
             break;
         // Japanese region only v1-v2
-        case 0x010600:
-            description = "CXP102064-001R (Not confirmed)";
+        case 0x010200:
+            description = "CXP101064-605R/CXP102064-001R"; // A-chassis SCPH-10000
             break;
-        case 0x010700:
-            description = "CXP102064-003R";
+        case 0x010600:
+            description = "CXP102064-003R (Not confirmed)";
             break;
         case 0x010800:
             description = "CXP102064-002R";
             break;
         case 0x020000:
-            description = "CXP102064-004R (Not confirmed)";
+            description = "CXP102064-004R";
             break;
         case 0x020200:
             description = "CXP102064-005R";
             break;
-        case 0x020800:
-            description = "CXP102064-006R";
+        case 0x020600:
+            description = "CXP102064-006R (Not confirmed)";
             break;
         case 0x020C00:
             description = "CXP102064-007R";
