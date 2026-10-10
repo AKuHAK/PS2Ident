@@ -822,7 +822,7 @@ const char *GetBOOTROMDesc(const char *extinfo, const char *romver, const char *
     else if (strcmp(combined, "20000727-013725C") == 0) description = "B10010";
     else if (strcmp(combined, "20000727-013728D") == 0) description = "B11010 (Not confirmed)";
     else if (strcmp(combined, "20000901-114731Z") == 0) description = "A-000-010";
-    else if (strcmp(combined, "20000902-234318C") == 0) description = "B10020)";
+    else if (strcmp(combined, "20000902-234318C") == 0) description = "B10020";
     else if (strcmp(combined, "20000902-234321C") == 0) description = "B20020";
     else if (strcmp(combined, "20000902-234323D") == 0) description = "B21020 (Not confirmed)";
     else if (strcmp(combined, "20001027-185015C") == 0) description = "B00012 (split chip)";
@@ -844,7 +844,7 @@ const char *GetBOOTROMDesc(const char *extinfo, const char *romver, const char *
     else if (strcmp(combined, "20020426-130151C") == 0) description = "B00090";
     else if (strcmp(combined, "20020426-130201C") == 0) description = "B20090";
     else if (strcmp(combined, "20020426-130207C") == 0) description = "B40090";
-    else if (strcmp(combined, "20021119-163841Z") == 0) description = "namco 2 unknwon chip";
+    else if (strcmp(combined, "20021119-163841Z") == 0) description = "namco 2 unknown chip";
     else if (strcmp(combined, "20030110-133906D") == 0) description = "Unknown chip";
     else if (strcmp(combined, "20030110-134044C") == 0) description = "Unknown chip";
     else if (strcmp(combined, "20030206-083918C") == 0) description = "B00102 (Not confirmed)";
@@ -860,7 +860,7 @@ const char *GetBOOTROMDesc(const char *extinfo, const char *romver, const char *
     else if (strcmp(combined, "20030227-193050D") == 0) description = "B21101 (Not confirmed)";
     else if (strcmp(combined, "20030325-181554C") == 0) description = "B10102";
     else if (strcmp(combined, "20030325-181555D") == 0) description = "B11102 (Not confirmed)";
-    else if (strcmp(combined, "20030520-144137D") == 0) description = "Unknown chip";
+    else if (strcmp(combined, "20030520-144137D") == 0) description = "B11041";
     else if (strcmp(combined, "20030520-144207D") == 0) description = "Unknown chip";
     else if (strcmp(combined, "20030623-142351C") == 0) description = "B00103 (Not confirmed)";
     else if (strcmp(combined, "20030623-142356C") == 0) description = "B10103 (Not confirmed)";
@@ -922,6 +922,7 @@ const char *GetDVDROMDesc(const char *dvdplVer)
     else if (strncmp(dvdplVer, "2.13A", 5) == 0) description = "D341060 (Not confirmed)";
     else if (strncmp(dvdplVer, "2.14J", 5) == 0) description = "Unknown chip";
     else if (strncmp(dvdplVer, "2.15G", 5) == 0) description = "D630080";
+    else if (strncmp(dvdplVer, "2.15K", 5) == 0) description = "D430080";
     else if (strncmp(dvdplVer, "2.16J", 5) == 0) description = "D020090";
     else if (strncmp(dvdplVer, "2.16D", 5) == 0) description = "D552090";
     else if (strncmp(dvdplVer, "3.00J", 5) == 0) description = "D020110 (Not confirmed)";
