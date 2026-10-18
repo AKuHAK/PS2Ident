@@ -73,7 +73,6 @@ int sceCdAltMV(u8 *buffer, u32 *stat)
     if ((result = sceCdApplySCmd(0x03, &subcommand, sizeof(subcommand), out_buffer)) != 0)
     {
         *stat = out_buffer[0] & 0x80;
-        out_buffer[0] &= 0x7F;
         memcpy(buffer, out_buffer, 4);
     }
 

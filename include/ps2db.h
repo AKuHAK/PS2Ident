@@ -117,7 +117,7 @@ struct PS2IDBMainboardEntry
     u16 MPUBoardID;
     u16 BoardInf;
     char romver[16];
-    u8 MECHACONVersion[4]; // RR MM DD TT, where RR = (7-bit) region, MM = major revision, mm = minor revision, TT = system type.
+    u8 MECHACONVersion[4]; // RR MM DD TT, where RR = region (bit 7 set on DEX), MM = major revision, mm = minor revision, TT = system type.
     u8 MRenewalDate[5];
     u8 ModelID[3];
     u8 EMCSID;

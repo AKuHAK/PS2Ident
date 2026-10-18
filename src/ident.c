@@ -961,32 +961,9 @@ const char *GetDVDROMDesc(const char *dvdplVer)
     return description;
 }
 
-const char *GetMECHACONChipDesc(unsigned int revision, const char *bootrom_extinfo, const char *romver)
+const char *GetMECHACONChipDesc(unsigned int revision)
 {
     const char *description;
-    int bootrom_year = 0;
-
-    if (bootrom_extinfo != NULL && bootrom_extinfo[0] >= '0' && bootrom_extinfo[0] <= '9' &&
-        bootrom_extinfo[1] >= '0' && bootrom_extinfo[1] <= '9' &&
-        bootrom_extinfo[2] >= '0' && bootrom_extinfo[2] <= '9' &&
-        bootrom_extinfo[3] >= '0' && bootrom_extinfo[3] <= '9')
-    {
-        bootrom_year = (bootrom_extinfo[0] - '0') * 1000 +
-                       (bootrom_extinfo[1] - '0') * 100 +
-                       (bootrom_extinfo[2] - '0') * 10 +
-                       (bootrom_extinfo[3] - '0');
-    }
-    else if (romver != NULL && strlen(romver) >= 10 &&
-             romver[6] >= '0' && romver[6] <= '9' &&
-             romver[7] >= '0' && romver[7] <= '9' &&
-             romver[8] >= '0' && romver[8] <= '9' &&
-             romver[9] >= '0' && romver[9] <= '9')
-    {
-        bootrom_year = (romver[6] - '0') * 1000 +
-                       (romver[7] - '0') * 100 +
-                       (romver[8] - '0') * 10 +
-                       (romver[9] - '0');
-    }
 
     if (revision >= 0x050000)
     {
@@ -994,7 +971,7 @@ const char *GetMECHACONChipDesc(unsigned int revision, const char *bootrom_extin
         if (revision != 0x050607)
             revision = revision & 0xffff00; // Mexico unit is unique
     }
-    DEBUG_PRINTF("MECHACON revision: 0x%08x (bootrom_year=%d)\n", revision, bootrom_year);
+    DEBUG_PRINTF("MECHACON revision: 0x%08x\n", revision);
 
     switch (revision)
     {
@@ -1065,14 +1042,18 @@ const char *GetMECHACONChipDesc(unsigned int revision, const char *bootrom_extin
         case 0x020C03:
             description = "CXP102064-303R"; // D-chassis SCPH-30002/3 (AU)
             break;
-        case 0x020D00:
-        case 0x020D01:
-        case 0x020D02:
+        case 0x020D80:
+        case 0x020D81:
+        case 0x020D82:
+        case 0x020D01: // fallback if masked
+        case 0x020D02: // fallback if masked
         case 0x020D03:
         case 0x020D04:
         case 0x020D05:
-            // v2.13: DTL-H3010x (2003+, DEX Multi-region) = 705R; DTL-H30000 (<= 2002) = 752R
-            description = (bootrom_year > 2002) ? "CXP102064-705R" : "CXP102064-752R";
+            description = "CXP102064-705R"; // All DTL-H3010x models (DEX Multi-region)
+            break;
+        case 0x020D00:
+            description = "CXP102064-752R"; // DTL-H30000 (Japan)
             break;
         case 0x020E00:
             description = "CXP102064-008R"; // D-chassis SCPH-30000 (JP)
@@ -1214,7 +1195,7 @@ const char *GetRegionDesc(unsigned char region)
 {
     const char *description;
 
-    switch (region)
+    switch (region & 0x7F)
     {
         case 0:
             description = "Japan";
@@ -1856,8 +1837,7 @@ int WriteSystemInformation(FILE *stream, const struct SystemInformation *SystemI
                         "    System type:         0x%02x (%s)\r\n"
                         "    DSP revision:        %u (%s)\r\n",
                 SystemInformation->mainboard.MECHACONVersion[1], SystemInformation->mainboard.MECHACONVersion[2],
-                GetMECHACONChipDesc((unsigned int)(SystemInformation->mainboard.MECHACONVersion[1]) << 16 | (unsigned int)(SystemInformation->mainboard.MECHACONVersion[2]) << 8 | SystemInformation->mainboard.MECHACONVersion[0],
-                                    SystemInformation->mainboard.BOOT_ROM.extinfo, SystemInformation->mainboard.romver),
+                GetMECHACONChipDesc((unsigned int)(SystemInformation->mainboard.MECHACONVersion[1]) << 16 | (unsigned int)(SystemInformation->mainboard.MECHACONVersion[2]) << 8 | SystemInformation->mainboard.MECHACONVersion[0]),
                 SystemInformation->mainboard.MECHACONVersion[0], GetRegionDesc(SystemInformation->mainboard.MECHACONVersion[0]),
                 SystemInformation->mainboard.MECHACONVersion[3], GetSystemTypeDesc(SystemInformation->mainboard.MECHACONVersion[3]),
                 SystemInformation->DSPVersion, GetDSPDesc(SystemInformation->DSPVersion));
