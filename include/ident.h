@@ -42,7 +42,7 @@ const char *GetGSChipDesc(unsigned char revision);
 const char *GetEEChipDesc(unsigned char revision, unsigned char GS_revision);
 const char *GetBOOTROMDesc(const char *extinfo, const char *romver, const char *dvdplVer);
 const char *GetDVDROMDesc(const char *dvdplVer);
-const char *GetMECHACONChipDesc(unsigned int revision);
+const char *GetMECHACONChipDesc(unsigned int revision, const char *bootrom_extinfo, const char *romver);
 const char *GetSystemTypeDesc(unsigned char type);
 const char *GetRegionDesc(unsigned char region);
 const char *GetMRPDesc(unsigned short int id);

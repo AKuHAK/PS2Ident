@@ -961,9 +961,32 @@ const char *GetDVDROMDesc(const char *dvdplVer)
     return description;
 }
 
-const char *GetMECHACONChipDesc(unsigned int revision)
+const char *GetMECHACONChipDesc(unsigned int revision, const char *bootrom_extinfo, const char *romver)
 {
     const char *description;
+    int bootrom_year = 0;
+
+    if (bootrom_extinfo != NULL && bootrom_extinfo[0] >= '0' && bootrom_extinfo[0] <= '9' &&
+        bootrom_extinfo[1] >= '0' && bootrom_extinfo[1] <= '9' &&
+        bootrom_extinfo[2] >= '0' && bootrom_extinfo[2] <= '9' &&
+        bootrom_extinfo[3] >= '0' && bootrom_extinfo[3] <= '9')
+    {
+        bootrom_year = (bootrom_extinfo[0] - '0') * 1000 +
+                       (bootrom_extinfo[1] - '0') * 100 +
+                       (bootrom_extinfo[2] - '0') * 10 +
+                       (bootrom_extinfo[3] - '0');
+    }
+    else if (romver != NULL && strlen(romver) >= 10 &&
+             romver[6] >= '0' && romver[6] <= '9' &&
+             romver[7] >= '0' && romver[7] <= '9' &&
+             romver[8] >= '0' && romver[8] <= '9' &&
+             romver[9] >= '0' && romver[9] <= '9')
+    {
+        bootrom_year = (romver[6] - '0') * 1000 +
+                       (romver[7] - '0') * 100 +
+                       (romver[8] - '0') * 10 +
+                       (romver[9] - '0');
+    }
 
     if (revision >= 0x050000)
     {
@@ -971,31 +994,70 @@ const char *GetMECHACONChipDesc(unsigned int revision)
         if (revision != 0x050607)
             revision = revision & 0xffff00; // Mexico unit is unique
     }
-    DEBUG_PRINTF("MECHACON revision: 0x%08x\n", revision);
+    DEBUG_PRINTF("MECHACON revision: 0x%08x (bootrom_year=%d)\n", revision, bootrom_year);
 
     switch (revision)
     {
-        case 0x010300:
-            description = "CXP101064-602R"; // DTL-T10000 and retail models, Japan region locked
+        // MechaCon v1.xx Series (CXP101064 / CXP102064)
+        case 0x010200:
+            description = "CXP101064-605R/CXP102064-001R"; // A-chassis SCPH-10000 (Japan launch)
             break;
+        case 0x010300:
+            description = "CXP101064-602R"; // A-chassis DTL-T10000, DTL-H10000
+            break;
+        case 0x010600:
         case 0x010700:
-            description = "CXP102064-003R (Not confirmed)";
+            description = "CXP102064-003R"; // A-chassis DTL-H10000 v2
+            break;
+        case 0x010800:
+            description = "CXP102064-002R"; // A-chassis SCPH-10K/15K GH-003
             break;
         case 0x010900:
-            description = "CXP102064-751R"; // DTL-T10000H, DTL-T15000
+            description = "CXP102064-751R"; // A-chassis DTL-T10000H, DTL-T15000
+            break;
+
+        // MechaCon v2.xx Series (CXP102064)
+        case 0x020000:
+            description = "CXP102064-004R"; // early SCPH-15000/18000 (GH-003 Board)
+            break;
+        case 0x020200:
+            description = "CXP102064-005R"; // A/A+ chassis SCPH-15000/18000
+            break;
+        case 0x020401:
+            description = "CXP102064-101R"; // B/C chassis SCPH-30001 (US)
+            break;
+        case 0x020402:
+            description = "CXP102064-201R"; // B/C chassis SCPH-30002 (EU)
+            break;
+        case 0x020403:
+            description = "CXP102064-301R"; // B/C chassis SCPH-30003 (AU)
             break;
         case 0x02040A:
-            description = "CXP102064-651R"; // only Arcade machines
+            description = "CXP102064-651R"; // Arcade machines (Namco System 246 / 256, Konami Python 1)
             break;
+        case 0x020500:
         case 0x020501:
         case 0x020502:
         case 0x020503:
-            description = "CXP102064-702R"; // DTL-H3000x
+            description = "CXP102064-702R"; // DTL-H30001, DTL-H30002
             break;
+        case 0x020600:
+            description = "CXP102064-006R"; // C/D chassis SCPH-30000 (JP)
+            break;
+        case 0x020601:
+            description = "CXP102064-102R"; // C/D chassis SCPH-30001 (US)
+            break;
+        case 0x020602:
+            description = "CXP102064-202R"; // C/D chassis SCPH-30004 (EU)
+            break;
+        case 0x020603:
+            description = "CXP102064-302R"; // C/D chassis SCPH-30002/3 (AU)
+            break;
+        case 0x020700:
         case 0x020701:
         case 0x020702:
         case 0x020703:
-            description = "CXP102064-703R"; // DTL-H3000x, DTL-H3010x
+            description = "CXP102064-703R"; // DTL-H30001, DTL-H30002
             break;
         case 0x020900:
         case 0x020901:
@@ -1004,76 +1066,38 @@ const char *GetMECHACONChipDesc(unsigned int revision)
         case 0x020904:
             description = "CXP102064-704R"; // DTL-H3000x, DTL-H3010x
             break;
+        case 0x020C00:
+            description = "CXP102064-007R"; // D-chassis SCPH-30000 (JP)
+            break;
+        case 0x020C01:
+            description = "CXP102064-103R"; // D-chassis SCPH-30001 (US)
+            break;
+        case 0x020C02:
+            description = "CXP102064-203R"; // D-chassis SCPH-30004 (EU)
+            break;
+        case 0x020C03:
+            description = "CXP102064-303R"; // D-chassis SCPH-30002/3 (AU)
+            break;
         case 0x020D00:
         case 0x020D01:
         case 0x020D02:
+        case 0x020D03:
         case 0x020D04:
         case 0x020D05:
-            description = "CXP102064-705R/-752R"; // DTL-H3000x, DTL-H3010x, DTL-T10000
-            break;
-        // Japanese region only v1-v2
-        case 0x010200:
-            description = "CXP101064-605R/CXP102064-001R"; // A-chassis SCPH-10000
-            break;
-        case 0x010600:
-            description = "CXP102064-003R (Not confirmed)";
-            break;
-        case 0x010800:
-            description = "CXP102064-002R";
-            break;
-        case 0x020000:
-            description = "CXP102064-004R";
-            break;
-        case 0x020200:
-            description = "CXP102064-005R";
-            break;
-        case 0x020600:
-            description = "CXP102064-006R (Not confirmed)";
-            break;
-        case 0x020C00:
-            description = "CXP102064-007R";
+            // v2.13: DTL-H3010x (2003+, DEX Multi-region) = 705R; DTL-H30000 (<= 2002) = 752R
+            description = (bootrom_year > 2002) ? "CXP102064-705R" : "CXP102064-752R";
             break;
         case 0x020E00:
-            description = "CXP102064-008R";
-            break;
-        // US region only
-        case 0x020401:
-            description = "CXP102064-101R";
-            break;
-        case 0x020601:
-            description = "CXP102064-102R";
-            break;
-        case 0x020C01:
-            description = "CXP102064-103R";
+            description = "CXP102064-008R"; // D-chassis SCPH-30000 (JP)
             break;
         case 0x020E01:
-            description = "CXP102064-104R";
-            break;
-        // EU region only
-        case 0x020402:
-            description = "CXP102064-201R";
-            break;
-        case 0x020602:
-            description = "CXP102064-202R";
-            break;
-        case 0x020C02:
-            description = "CXP102064-203R";
+            description = "CXP102064-104R"; // D-chassis SCPH-30001 (US)
             break;
         case 0x020E02:
-            description = "CXP102064-204R";
-            break;
-        // Australia region only
-        case 0x020403:
-            description = "CXP102064-301R";
-            break;
-        case 0x020603:
-            description = "CXP102064-302R";
-            break;
-        case 0x020C03:
-            description = "CXP102064-303R";
+            description = "CXP102064-204R"; // D-chassis SCPH-30004 (EU)
             break;
         case 0x020E03:
-            description = "CXP102064-304R";
+            description = "CXP102064-304R"; // D-chassis SCPH-30002/3 (AU)
             break;
         // Japan region only
         case 0x030200:
@@ -1845,7 +1869,8 @@ int WriteSystemInformation(FILE *stream, const struct SystemInformation *SystemI
                         "    System type:         0x%02x (%s)\r\n"
                         "    DSP revision:        %u (%s)\r\n",
                 SystemInformation->mainboard.MECHACONVersion[1], SystemInformation->mainboard.MECHACONVersion[2],
-                GetMECHACONChipDesc((unsigned int)(SystemInformation->mainboard.MECHACONVersion[1]) << 16 | (unsigned int)(SystemInformation->mainboard.MECHACONVersion[2]) << 8 | SystemInformation->mainboard.MECHACONVersion[0]),
+                GetMECHACONChipDesc((unsigned int)(SystemInformation->mainboard.MECHACONVersion[1]) << 16 | (unsigned int)(SystemInformation->mainboard.MECHACONVersion[2]) << 8 | SystemInformation->mainboard.MECHACONVersion[0],
+                                    SystemInformation->mainboard.BOOT_ROM.extinfo, SystemInformation->mainboard.romver),
                 SystemInformation->mainboard.MECHACONVersion[0], GetRegionDesc(SystemInformation->mainboard.MECHACONVersion[0]),
                 SystemInformation->mainboard.MECHACONVersion[3], GetSystemTypeDesc(SystemInformation->mainboard.MECHACONVersion[3]),
                 SystemInformation->DSPVersion, GetDSPDesc(SystemInformation->DSPVersion));
