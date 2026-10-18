@@ -87,13 +87,31 @@ jobs:
           mkdir -p dump_output
           ELF_PATH="$PWD/PS2Ident.elf"
           
-          # Default Play! directory on Linux
+          # Configure null audio drivers for OpenAL and ALSA to avoid headless crashes
+          cat << 'EOF' > ~/.asoundrc
+          pcm.!default {
+              type null
+          }
+          ctl.!default {
+              type null
+          }
+          EOF
+
+          cat << 'EOF' > ~/.alsoftrc
+          [general]
+          drivers = null
+          EOF
+
+          # Default Play! directory on Linux (both XDG locations for safety)
           PLAY_DATA_DIR="$HOME/.local/share/Play Data Files"
+          PLAY_CONFIG_DIR="$HOME/.config/Play Data Files"
           HOST_DIR="$PLAY_DATA_DIR/vfs/host"
           
           echo "=== 1. Creating directories ==="
           mkdir -p "$HOST_DIR"
           mkdir -p "$PLAY_DATA_DIR/logs"
+          mkdir -p "$PLAY_CONFIG_DIR"
+          mkdir -p "$PLAY_CONFIG_DIR/vfs/host"
 
           echo "=== 2. Generating Play! Config.xml ==="
           # Disabling audio output to fix ALSA missing card crash
@@ -106,8 +124,7 @@ jobs:
               <Preference Name="log.showprints" Type="boolean" Value="true" />
           </Config>
           EOF
-          
-          echo "Config.xml generated at: $PLAY_DATA_DIR/Config.xml"
+          cp -v "$PLAY_DATA_DIR/config.xml" "$PLAY_CONFIG_DIR/config.xml"
 
           echo "=== 3. Starting Play! (headless) ==="
           set +e
@@ -142,6 +159,12 @@ jobs:
 
           if [ -d "$HOST_DIR" ]; then
             cp -rv "$HOST_DIR"/* dump_output/ 2>/dev/null || true
+          fi
+          if [ -d "$PLAY_CONFIG_DIR/vfs/host" ]; then
+            cp -rv "$PLAY_CONFIG_DIR/vfs/host"/* dump_output/ 2>/dev/null || true
+          fi
+          if [ -f "$PLAY_CONFIG_DIR/ps2_stdout.txt" ]; then
+            cp -v "$PLAY_CONFIG_DIR/ps2_stdout.txt" dump_output/ || true
           fi
 
           echo "=== Dump Directory Contents ==="
