@@ -3,6 +3,7 @@ name: Emulator Test (Play!)
 on:
   push:
   pull_request:
+  workflow_dispatch:
 
 jobs:
   build-headless:
@@ -185,6 +186,48 @@ jobs:
           else
             echo "[Empty / File not created]"
           fi
+
+      - name: Validate dumped files
+        run: |
+          set -eu
+          echo "=== 5. Validating dump results ==="
+          
+          # Check for specs text file
+          SPECS_FILE=$(find dump_output -type f -name "*specs.txt" | head -1)
+          if [ -z "$SPECS_FILE" ]; then
+            echo "::error::Validation FAILED: No specs.txt file was dumped!"
+            exit 1
+          fi
+          echo "✓ Found specs file: $SPECS_FILE"
+          
+          if ! grep -q "Playstation 2 Ident" "$SPECS_FILE"; then
+            echo "::error::Validation FAILED: $SPECS_FILE is missing valid header!"
+            exit 1
+          fi
+          echo "✓ Specs file header is valid"
+          
+          # Check for Boot ROM dump (.BIN)
+          BIN_FILE=$(find dump_output -type f -name "*.BIN" | head -1)
+          if [ -z "$BIN_FILE" ]; then
+            echo "::error::Validation FAILED: Boot ROM (.BIN) was not dumped!"
+            exit 1
+          fi
+          BIN_SIZE=$(wc -c < "$BIN_FILE")
+          echo "✓ Found Boot ROM dump: $BIN_FILE ($BIN_SIZE bytes)"
+          if [ "$BIN_SIZE" -ne 4194304 ]; then
+            echo "::error::Validation FAILED: Boot ROM size is $BIN_SIZE bytes (expected 4194304)!"
+            exit 1
+          fi
+          
+          # Check for Mechacon version (.MEC)
+          MEC_FILE=$(find dump_output -type f -name "*.MEC" | head -1)
+          if [ -z "$MEC_FILE" ]; then
+            echo "::error::Validation FAILED: Mechacon version (.MEC) was not dumped!"
+            exit 1
+          fi
+          echo "✓ Found Mechacon version file: $MEC_FILE"
+          
+          echo "=== ALL DUMP CHECKS PASSED SUCCESSFULLY ==="
 
       - name: Upload dump artifacts
         uses: actions/upload-artifact@v7
