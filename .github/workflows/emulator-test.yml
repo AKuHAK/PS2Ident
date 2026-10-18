@@ -56,7 +56,8 @@ jobs:
             libxcb1 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 \
             libxcb-render-util0 libxcb-xinerama0 libxcb-xkb1 \
             libxkbcommon-x11-0 libdbus-1-3 libfontconfig1 \
-            libfreetype6 libpulse0 libstdc++6 || true
+            libfreetype6 libpulse0 libstdc++6 file \
+            libfuse2t64 libfuse2 || true
 
       - name: Download Play! emulator (latest master CI build)
         run: |
@@ -68,11 +69,15 @@ jobs:
           mkdir -p play_emulator
           unzip -q play_linux.zip -d play_emulator
 
-          PLAY_BIN=$(find play_emulator -type f -name "*.AppImage" | head -1)
-          if [ -z "$PLAY_BIN" ]; then
+          PLAY_APPIMAGE=$(find play_emulator -type f -name "*.AppImage" | head -1)
+          if [ -z "$PLAY_APPIMAGE" ]; then
             echo "::error::Could not find Play! AppImage after extraction"
             exit 1
           fi
+          chmod +x "$PLAY_APPIMAGE"
+          cd play_emulator
+          "$PLAY_APPIMAGE" --appimage-extract
+          PLAY_BIN="$PWD/squashfs-root/AppRun"
           chmod +x "$PLAY_BIN"
           echo "PLAY_BIN=$PLAY_BIN" >> "$GITHUB_ENV"
 
@@ -106,9 +111,8 @@ jobs:
 
           echo "=== 3. Starting Play! (headless) ==="
           set +e
-          APPIMAGE_EXTRACT_AND_RUN=1 \
-            xvfb-run --auto-servernum --server-args="-screen 0 640x480x24" \
-              timeout 120 "$PLAY_BIN" --elf "$ELF_PATH" > dump_output/emulator_output.log 2>&1
+          xvfb-run --auto-servernum --server-args="-screen 0 640x480x24" \
+            timeout 120 "$PLAY_BIN" --elf "$ELF_PATH" > dump_output/emulator_output.log 2>&1
           EMU_EXIT=$?
           set -e
           
@@ -116,6 +120,8 @@ jobs:
           
           if [ $EMU_EXIT -ne 0 ] && [ $EMU_EXIT -ne 124 ]; then
             echo "::error::Play! exited with unexpected code $EMU_EXIT"
+            echo "=== Emulator Output Log ==="
+            cat dump_output/emulator_output.log || true
             exit $EMU_EXIT
           fi
 

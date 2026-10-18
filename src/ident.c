@@ -322,7 +322,11 @@ int DumpRom(const char *filename, const struct SystemInformation *SystemInformat
             pBuffer = pBuffer == buffer1 ? buffer2 : buffer1;
             if (BytesRemaining < ROMSize)
             {
+#ifdef HEADLESS
+                if (fwrite(pBuffer, 1, prevSize, file) != prevSize)
+#else
                 if (fwrite(UNCACHED_SEG(pBuffer), 1, prevSize, file) != prevSize)
+#endif
                 {
                     fclose(file);
                     result = -EIO;
@@ -341,7 +345,11 @@ int DumpRom(const char *filename, const struct SystemInformation *SystemInformat
             SysmanSync(0);
 #endif
 
+#ifdef HEADLESS
+            if (fwrite(pBuffer, 1, prevSize, file) == prevSize)
+#else
             if (fwrite(UNCACHED_SEG(pBuffer), 1, prevSize, file) == prevSize)
+#endif
                 DumpingStatus[DumpingRegion].progress = 1.00f - (float)BytesRemaining / ROMSize;
             else
                 result = -EIO;
