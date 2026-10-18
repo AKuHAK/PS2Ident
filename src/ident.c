@@ -1035,10 +1035,7 @@ const char *GetMECHACONChipDesc(unsigned int revision, const char *bootrom_extin
         case 0x02040A:
             description = "CXP102064-651R"; // Arcade machines (Namco System 246 / 256, Konami Python 1)
             break;
-        case 0x020500:
         case 0x020501:
-        case 0x020502:
-        case 0x020503:
             description = "CXP102064-702R"; // DTL-H30001, DTL-H30002
             break;
         case 0x020600:
@@ -1053,18 +1050,8 @@ const char *GetMECHACONChipDesc(unsigned int revision, const char *bootrom_extin
         case 0x020603:
             description = "CXP102064-302R"; // C/D chassis SCPH-30002/3 (AU)
             break;
-        case 0x020700:
         case 0x020701:
-        case 0x020702:
-        case 0x020703:
             description = "CXP102064-703R"; // DTL-H30001, DTL-H30002
-            break;
-        case 0x020900:
-        case 0x020901:
-        case 0x020902:
-        case 0x020903:
-        case 0x020904:
-            description = "CXP102064-704R"; // DTL-H3000x, DTL-H3010x
             break;
         case 0x020C00:
             description = "CXP102064-007R"; // D-chassis SCPH-30000 (JP)
