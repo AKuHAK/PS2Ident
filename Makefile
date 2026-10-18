@@ -26,7 +26,7 @@ EE_OBJS := $(EE_OBJS:%=$(EE_OBJS_DIR)%)
 
 EE_INCS := -I$(PS2SDK)/ports/include -I$(PS2SDK)/ports/include/freetype2 -I$(EE_INC_DIR)
 EE_LDFLAGS := -L$(PS2SDK)/ports/lib
-EE_LIBS := -lgs -lpng -lz -lcdvd -lmc -lpadx -lpatches -liopreboot -lfreetype -lm
+EE_LIBS := -lgs -lpng -lz -lcdvd -lmc -lpadx -Wl,--start-group -liopreboot -lpatches -lkernel -Wl,--end-group -lfreetype -lm
 EE_CFLAGS += $(EE_GPVAL) -Wno-missing-braces -O0 -g
 
 EE_TEMP_FILES = SIO2MAN_irx.c MCMAN_irx.c MCSERV_irx.c PADMAN_irx.c POWEROFF_irx.c PS2DEV9_irx.c USBD_irx.c  USBHDFSD_irx.c USBHDFSDFSV_irx.c SYSMAN_irx.c buttons.c devices.c background_img.c font_Default.c IOPRP_img.c
@@ -35,7 +35,6 @@ EE_TEMP_FILES := $(EE_TEMP_FILES:%=$(EE_SRC_DIR)%)
 
 ifeq ($(HEADLESS),1)
   EE_CFLAGS += -DHEADLESS
-  DSNET_HOST_SUPPORT = 1
   EE_SIO = 1
   DEBUG = 1
 endif

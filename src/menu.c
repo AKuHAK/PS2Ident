@@ -1954,16 +1954,18 @@ static int DumpSystemROM(const char *path, const struct SystemInformation *Syste
         DumpingStatus[i].status   = 0;    // Initialize status to "In progress"
     }
 
+    const char *modelName = (SystemInformation->mainboard.ModelName[0] != '\0') ? SystemInformation->mainboard.ModelName : "PS2";
+
     // Calculate the lengths of various parts of the filenames used below.
     PathLength   = strlen(path);
-    ModelNameLen = strlen(SystemInformation->mainboard.ModelName);
+    ModelNameLen = strlen(modelName);
 
-    filename     = malloc(PathLength + ModelNameLen + 32);
+    filename     = malloc(PathLength + ModelNameLen + 128);
 
 #ifndef DSNET_HOST_SUPPORT
-    sprintf(filename, "%s/%s_specs.txt", path, SystemInformation->mainboard.ModelName);
+    sprintf(filename, "%s/%s_specs.txt", path, modelName);
 #else
-    sprintf(filename, "%s%s_specs.txt", path, SystemInformation->mainboard.ModelName);
+    sprintf(filename, "%s%s_specs.txt", path, modelName);
 #endif
     if ((logfile = fopen(filename, "wb")) != NULL)
     {
@@ -1997,17 +1999,17 @@ static int DumpSystemROM(const char *path, const struct SystemInformation *Syste
     //     if (PS2IDBMS_LookupMainboardModel(&SystemInformation->mainboard) == NULL)
     //     {
     // #ifndef DSNET_HOST_SUPPORT
-    //         sprintf(filename, "%s/%s_database.bin", path, SystemInformation->mainboard.ModelName);
+    //         sprintf(filename, "%s/%s_database.bin", path, modelName);
     // #else
-    //         sprintf(filename, "%s%s_database.bin", path, SystemInformation->mainboard.ModelName);
+    //         sprintf(filename, "%s%s_database.bin", path, modelName);
     // #endif
     //         WriteNewMainboardDBRecord(filename, &SystemInformation->mainboard);
     //     }
 
 #ifndef DSNET_HOST_SUPPORT
-    sprintf(filename, "%s/%s.MEC", path, SystemInformation->mainboard.ModelName);
+    sprintf(filename, "%s/%s.MEC", path, modelName);
 #else
-    sprintf(filename, "%s%s.MEC", path, SystemInformation->mainboard.ModelName);
+    sprintf(filename, "%s%s.MEC", path, modelName);
 #endif
     if ((result = DumpMECHACON_VERSION(filename, SystemInformation)) == 0)
         DEBUG_PRINTF("done!\n");
@@ -2015,9 +2017,9 @@ static int DumpSystemROM(const char *path, const struct SystemInformation *Syste
         DEBUG_PRINTF("failed!\n");
 
 #ifndef DSNET_HOST_SUPPORT
-    sprintf(filename, "%s/%s.NVM", path, SystemInformation->mainboard.ModelName);
+    sprintf(filename, "%s/%s.NVM", path, modelName);
 #else
-    sprintf(filename, "%s%s.NVM", path, SystemInformation->mainboard.ModelName);
+    sprintf(filename, "%s%s.NVM", path, modelName);
 #endif
     if ((result = DumpMECHACON_EEPROM(filename)) == 0)
     {
@@ -2030,16 +2032,18 @@ static int DumpSystemROM(const char *path, const struct SystemInformation *Syste
     // *.mec
     DEBUG_PRINTF("Dumping Mechacon version 4 bytes...");
 
+#ifndef HEADLESS
     RedrawDumpingScreen(SystemInformation, DumpingStatus);
+#endif
 
     if (SystemInformation->mainboard.DVD_ROM.IsExists && DumpLargeRoms)
     {
         DEBUG_PRINTF("Dumping DVD ROM at %u, %u bytes...", SystemInformation->mainboard.DVD_ROM.StartAddress, SystemInformation->mainboard.DVD_ROM.size);
 
 #ifndef DSNET_HOST_SUPPORT
-        sprintf(filename, "%s/%s.ROM1", path, SystemInformation->mainboard.ModelName);
+        sprintf(filename, "%s/%s.ROM1", path, modelName);
 #else
-        sprintf(filename, "%s%s.ROM1", path, SystemInformation->mainboard.ModelName);
+        sprintf(filename, "%s%s.ROM1", path, modelName);
 #endif
         if ((result = DumpRom(filename, SystemInformation, DumpingStatus, DUMP_REGION_DVD_ROM)) == 0)
         {
@@ -2056,9 +2060,9 @@ static int DumpSystemROM(const char *path, const struct SystemInformation *Syste
         DEBUG_PRINTF("Dumping Boot ROM at %u, %u bytes...", SystemInformation->mainboard.BOOT_ROM.StartAddress, SystemInformation->mainboard.BOOT_ROM.size);
 
 #ifndef DSNET_HOST_SUPPORT
-        sprintf(filename, "%s/%s.BIN", path, SystemInformation->mainboard.ModelName);
+        sprintf(filename, "%s/%s.BIN", path, modelName);
 #else
-        sprintf(filename, "%s%s.BIN", path, SystemInformation->mainboard.ModelName);
+        sprintf(filename, "%s%s.BIN", path, modelName);
 #endif
         if ((result = DumpRom(filename, SystemInformation, DumpingStatus, DUMP_REGION_BOOT_ROM)) == 0)
         {
@@ -2070,7 +2074,9 @@ static int DumpSystemROM(const char *path, const struct SystemInformation *Syste
         }
     }
 
+#ifndef HEADLESS
     RedrawDumpingScreen(SystemInformation, DumpingStatus);
+#endif
 
 #ifdef DEBUG
     WriteSystemInformation(stdout, SystemInformation);
@@ -2102,27 +2108,43 @@ static int DumpSystemROM(const char *path, const struct SystemInformation *Syste
 #ifdef HEADLESS
 int RunHeadlessDump(const struct SystemInformation *SystemInformation)
 {
-    FILE *log;
+    char DumpPath[256];
     int result;
+    const char *modelName = (SystemInformation->mainboard.ModelName[0] != '\0') ? SystemInformation->mainboard.ModelName : "PS2";
 
     printf("PS2Ident " PS2IDENT_VERSION " headless dump starting...\n");
     fflush(stdout);
 
-    /* Write a diagnostic log to host0: so CI can capture it even if printf
-     * output is not relayed to the host process's stdout by the emulator. */
-    log = fopen("host0:PS2Ident_headless.txt", "wb");
-    if (log != NULL)
+    strcpy(DumpPath, "host0:");
+    if (!(SystemInformation->mainboard.status & PS2IDB_STAT_ERR_CONSOLEID))
     {
-        fprintf(log, "PS2Ident " PS2IDENT_VERSION " headless dump starting...\n");
-        WriteSystemInformation(log, SystemInformation);
-        fclose(log);
+        u32 serial;
+
+        serial = ((u32)SystemInformation->ConsoleID[6]) << 16 | ((u32)SystemInformation->ConsoleID[5]) << 8 | ((u32)SystemInformation->ConsoleID[4]);
+        sprintf(&DumpPath[strlen(DumpPath)], "/%s_%07u", modelName, serial);
+    }
+    else
+    {
+        sprintf(&DumpPath[strlen(DumpPath)], "/%s_noserial", modelName);
     }
 
-    WriteSystemInformation(stdout, SystemInformation);
+    printf("Headless target directory: %s\n", DumpPath);
     fflush(stdout);
 
-    result = DumpSystemROM("host0:", SystemInformation);
-    printf("DumpSystemROM result: %d\n", result);
+    DEBUG_PRINTF("Cleaning up %s\n", DumpPath);
+    rmdir(DumpPath);
+    DEBUG_PRINTF("Creating %s\n", DumpPath);
+    if (((result = mkdir(DumpPath, 0755)) >= 0) || (result == -EEXIST))
+    {
+        result = DumpSystemROM(DumpPath, SystemInformation);
+    }
+    else
+    {
+        printf("Failed to create directory %s: result = %d\n", DumpPath, result);
+        fflush(stdout);
+    }
+
+    printf("DumpSystemROM completed with result: %d\n", result);
     fflush(stdout);
     return result;
 }

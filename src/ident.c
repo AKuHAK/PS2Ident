@@ -310,11 +310,15 @@ int DumpRom(const char *filename, const struct SystemInformation *SystemInformat
         {
             BytesToRead = BytesRemaining > MEM_IO_BLOCK_SIZE ? MEM_IO_BLOCK_SIZE : BytesRemaining;
 
+#ifndef HEADLESS
             SysmanSync(0);
+#endif
             while (readDevMemEEIOP(MemDumpStart, pBuffer, BytesToRead, 1) != 0)
                 nopdelay();
 
+#ifndef HEADLESS
             RedrawDumpingScreen(SystemInformation, DumpingStatus);
+#endif
             pBuffer = pBuffer == buffer1 ? buffer2 : buffer1;
             if (BytesRemaining < ROMSize)
             {
@@ -333,7 +337,9 @@ int DumpRom(const char *filename, const struct SystemInformation *SystemInformat
         if (result == 0)
         {
             pBuffer = pBuffer == buffer1 ? buffer2 : buffer1;
+#ifndef HEADLESS
             SysmanSync(0);
+#endif
 
             if (fwrite(UNCACHED_SEG(pBuffer), 1, prevSize, file) == prevSize)
                 DumpingStatus[DumpingRegion].progress = 1.00f - (float)BytesRemaining / ROMSize;

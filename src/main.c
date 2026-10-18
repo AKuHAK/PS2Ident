@@ -193,7 +193,7 @@ int main(int argc, char *argv[])
     ee_sema_t ThreadSema;
     int SystemInitSema;
     struct SystemInitParams InitThreadParams;
-    int id, ret;
+    int id, ret, fd, i;
 
     //	chdir("mass:/PS2Ident/");
 #ifndef HEADLESS
@@ -251,10 +251,41 @@ int main(int argc, char *argv[])
     sbv_patch_fileio();
 
 #ifdef HEADLESS
-    /* In headless/emulator mode skip all heavy IOP module loading, USB init,
-     * OSD init, and UI init.  Just dump the EE information that was already
-     * gathered and exit so the emulator test does not hang. */
-    DEBUG_PRINTF("Headless mode: dumping system information to host0:\n");
+    /* Initialize CDVD, OSD and peripherals in headless mode so all identical
+     * information and files are gathered and dumped without UI or hangs. */
+    DEBUG_PRINTF("Headless mode: gathering system information...\n");
+    PS1DRVInit();
+    DVDPlayerInit();
+    sceCdInit(SCECdINoD);
+    cdInitAdd();
+    OSDInitSystemPaths();
+    OSDInitROMVER();
+    GetRomName(SystemInformation.mainboard.romver);
+    GetPeripheralInformation(&SystemInformation);
+
+    char rom_extinfo[16];
+    for (i = 0; i < 3; i++)
+    {
+        if (SystemInformation.ROMs[i].IsExists)
+        {
+            sprintf(rom_extinfo, "rom%d:EXTINFO", i);
+            fd = open(rom_extinfo, O_RDONLY);
+            if (fd >= 0)
+            {
+                SystemInformation.ROMs[i].extinfo[0] = '\0';
+                lseek(fd, 0x10, SEEK_SET);
+                read(fd, SystemInformation.ROMs[i].extinfo, sizeof(SystemInformation.ROMs[i].extinfo));
+                close(fd);
+                SystemInformation.ROMs[i].extinfo[15] = '\0';
+            }
+            if (i == 0)
+                strncpy(SystemInformation.mainboard.BOOT_ROM.extinfo, SystemInformation.ROMs[i].extinfo, 16);
+            else if (i == 1)
+                strncpy(SystemInformation.mainboard.DVD_ROM.extinfo, SystemInformation.ROMs[i].extinfo, 16);
+        }
+    }
+
+    DEBUG_PRINTF("Headless mode: executing dump...\n");
     RunHeadlessDump(&SystemInformation);
     printf("PS2Ident headless dump complete.\n");
     fflush(stdout);

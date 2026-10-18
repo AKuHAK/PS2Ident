@@ -88,6 +88,9 @@ int SysmanWriteMemory(void *MemoryStart, const void *buffer, unsigned int NumByt
 
 int SysmanSync(int mode)
 {
+#ifdef HEADLESS
+    return 0;
+#else
     if (mode)
         return SifCheckStatRpc(&SYSMAN_rpc_cd);
     else
@@ -96,6 +99,7 @@ int SysmanSync(int mode)
         };
 
     return 0;
+#endif
 }
 
 /*	Description:	Calculates the size of the IOPRP image at the specified address in IOP address space.
@@ -138,6 +142,13 @@ int SysmanCalcROMChipSize(unsigned int RegionSize)
 
 int SysmanGetHardwareInfo(t_SysmanHardwareInfo *hwinfo)
 {
+#ifdef HEADLESS
+    memset(hwinfo, 0, sizeof(t_SysmanHardwareInfo));
+    hwinfo->BOOT_ROM.StartAddress = 0x1FC00000;
+    hwinfo->BOOT_ROM.size         = 4 * 1024 * 1024;
+    hwinfo->BOOT_ROM.IsExists     = 1;
+    return 0;
+#else
     int RPC_res;
 
     if ((RPC_res = SifCallRpc(&SYSMAN_rpc_cd, SYSMAN_GetHardwareInfo, 0, NULL, 0, ReceiveBuffer, sizeof(int) + sizeof(t_SysmanHardwareInfo), NULL, NULL)) >= 0)
@@ -147,10 +158,15 @@ int SysmanGetHardwareInfo(t_SysmanHardwareInfo *hwinfo)
     }
 
     return RPC_res;
+#endif
 }
 
 int SysmanGetMACAddress(unsigned char *MAC_address)
 {
+#ifdef HEADLESS
+    memset(MAC_address, 0, 6);
+    return 0;
+#else
     int RPC_res;
 
     if ((RPC_res = SifCallRpc(&SYSMAN_rpc_cd, SYSMAN_GetMACAddress, 0, NULL, 0, ReceiveBuffer, sizeof(int) + 6, NULL, NULL)) >= 0)
@@ -160,4 +176,5 @@ int SysmanGetMACAddress(unsigned char *MAC_address)
     }
 
     return RPC_res;
+#endif
 }
