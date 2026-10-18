@@ -69,7 +69,7 @@ jobs:
           mkdir -p play_emulator
           unzip -q play_linux.zip -d play_emulator
 
-          PLAY_APPIMAGE=$(find play_emulator -type f -name "*.AppImage" | head -1)
+          PLAY_APPIMAGE=$(realpath $(find play_emulator -type f -name "*.AppImage" | head -1))
           if [ -z "$PLAY_APPIMAGE" ]; then
             echo "::error::Could not find Play! AppImage after extraction"
             exit 1
@@ -141,7 +141,7 @@ jobs:
           fi
 
           if [ -d "$HOST_DIR" ]; then
-            find "$HOST_DIR" -type f -exec cp -v {} dump_output/ \; 2>/dev/null || true
+            cp -rv "$HOST_DIR"/* dump_output/ 2>/dev/null || true
           fi
 
           echo "=== Dump Directory Contents ==="
